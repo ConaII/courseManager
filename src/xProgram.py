@@ -146,7 +146,7 @@ def selCourse(select=True, filters=False):
             elseval(action)
 
 def addStudent(course):
-    name, dni = None
+    name, dni = None, None
     while True:
         if name is None:
             print(f"Introducir nombres (Separar con espacios):\n")
@@ -211,7 +211,7 @@ def modStudent():
         if action == "0":
             return
         elif action == "1":
-            newCourse = selCourse()
+            newCourse = selCourse(select=False)
             if newCourse is not None:
                 _vars.courses[newCourse][student] = _vars.courses[course][student]
                 _vars.courses[course].pop(student)
@@ -240,7 +240,7 @@ def modStudent():
                     _vars.courses[course][dni] = _vars.courses[course][student]
                     _vars.courses[course].pop(student)
                     _vars.selected[1] = dni
-                    green("El DNI fue modificado correctamente.")
+                    green("El DNI fue modificado correctamente.\n")
             else: elseval(dni)
         else:
             elseval(action)
@@ -285,9 +285,32 @@ def filterList():
             dict_ = {k:c for k, c in dict_.items() if c in courses}
     return dict_
 
+def listStudents():
+    dict_ = filterList()
+    _vars.exitSubMenu = False
+    while not _vars.exitSubMenu:
+        print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
+        for i, (student, course) in enumerate(dict_.items()):
+            mPrint(f"[{i+1}].", f"{fg(225,120,98)}{course} {fg.li_grey}{_vars.turns[course]} {fg.cyan}{_vars.courses[course][student][0]} {fg.li_grey}{alt_funcs.formatAmount(student, 1)}", "index")
+        print()
+        mPrint("[0].", f"{fg.li_red}[SALIR]", True)
+        print()
+        action = xinput()
+        student = alt_funcs.getByIndex(list(dict_), action)
+        if student is None:
+            pass
+        elif action == "0":
+            return
+        elif student in dict_:
+            _vars.selected = [dict_[student], student]
+            modStudent()
+        else:
+            elseval(action)
+
 def searchStudent(type_):
     search, dict_ = None, filterList()
-    while True:
+    _vars.exitSubMenu = False
+    while not _vars.exitSubMenu:
         if search is None:
             if type_ == "name":
                 print(f"Introducir nombres (Separar con espacios):\n")

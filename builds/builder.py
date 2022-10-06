@@ -105,24 +105,17 @@ def obfuscate():
             if file == "__init__.py":
                 shutil.copy2(f"{k}/{file}", f"obfuscated/{v}")
                 continue
-            elif file in {"Master.py","_vars.py"}:
+            elif file == "_vars.py":
                 with open(f"{k}/{file}", 'r') as f:
                     data = f.read()
-                if file == "Master.py":
-                    data.replace('if True and "coursesManager\\test" not in os.getcwd():', 'if False:')
-                else:
-                    defaults = {
-                        "devMode =": False,
-                        "godMode =": False,
-                        "passThrough =": False,
-                        '"debugMode":': False,
-                        '"allowDev":': False,
-                        '"allowMP":': False,
-                        '"saveCfg":': True,
-                        '"loadCfg":': True,
-                    }
-                    for ks, vs in defaults.items():
-                        data = data.replace(f"{ks} {not vs}", f"{ks} {vs}")
+                defaults = {
+                    "devMode =": False,
+                    '"allowDev":': False,
+                    '"saveCfg":': True,
+                    '"loadCfg":': True,
+                }
+                for ks, vs in defaults.items():
+                    data = data.replace(f"{ks} {not vs}", f"{ks} {vs}")
                 with open(f"utils/{file}", 'w') as f:
                     f.write(data)
                 path = f"utils/{file}"
@@ -222,7 +215,7 @@ def signer(x64=False):
         fullname = f'{config.options["name"]} v{config.options["version"]}'
         if x64:
             fullname += "_x64"
-        cmd = [config.pyPaths["signer"], 'sign', '/fd', 'SHA256', '/f', '../storage/private/woodcert_private.pfx', '/p', 'wood_enable_CERTPAPU23958']
+        cmd = [config.pyPaths["signer"], 'sign', '/fd', 'SHA256', '/f', '../storage/private/certSigner.pfx', '/p', 'LAMBDACOURSE_5849']
         dirs = [
             '.exe',
             f'/{config.options["name"]}.exe',

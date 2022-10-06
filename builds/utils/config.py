@@ -57,13 +57,9 @@ rarFiles = {
     ],
     "include": [
         "utils/data/*",
-        "../storage/docs/changelog.txt",
-        "../storage/docs/!!! READ ME VERY IMPORTANT !!!.txt",
-        "../src/resources",
     ],
     "empty": [
-        "mods",
-        "saves",
+        "courses",
     ]
 }
 
@@ -74,34 +70,22 @@ pyIns = {
     "imports": "./obfuscated",
     "output": "./product",
     "temp": "./utils/temp",
-    "icon": "../storage/icons/wood.ico",
+    "icon": "../storage/icons/favicon.ico",
     "file-imports": [
-        "xGame",
-        "game._vars",
-        "game.menus",
-        "game.menu_funcs",
+        "xProgram",
+        "core._vars",
+        "core.menus",
         "utils.funcs",
         "utils.alt_funcs",
-        "utils.game_funcs",
-        "utils.thread_funcs"
     ],
     "hidden-imports": [
-        "certifi",
-        #"cffi",
-        "charset_normalizer",
-        "cryptography",
-        "cryptography.fernet",
-        "idna",
-        "inflect",
-        "keyboard",
-        "pydantic",
-        "pygame",
-        "pypresence",
-        "PySimpleGUI",
-        "requests",
+        "asyncio",
+        "cffi",
+        "numpy",
+        "et_xmlfile",
+        "openpyxl",
         "sty",
-        "typing_extensions",
-        "urllib3",
+        "xlsxwriter",
     ],
     "data": []
 }

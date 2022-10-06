@@ -194,7 +194,7 @@ def menuLoop(funcMenu):
             elif action == "5":
                 if not len(_vars.courses):
                     warn("No hay ningun curso añadido.\n")
-                if not any(len(x) for x in _vars.courses):
+                elif not any(len(x) for x in _vars.courses):
                     warn("No hay ningun alumno añadido.\n")
                 else:
                     changeMenu("search")
@@ -209,6 +209,8 @@ def menuLoop(funcMenu):
             mPrint("[2].", f"{fg(152,85,211)}Buscar Nombre", True)
             mPrint("[3].", f"{fg(235,173,98)}Filtrar por Curso", True)
             mPrint("[4].", f"{fg(228,125,50)}Filtrar por Turno", True)
+            print()
+            mPrint("[5].", f"{fg(30,170,106)}Listado de alumnos", True)
             print()
             mPrint("[0].", f"{fg.li_red}[SALIR]", True)
             print()
@@ -237,6 +239,8 @@ def menuLoop(funcMenu):
                     else:
                         green(f"Se añadio el turno {turn} al filtro.\n")
                         _vars.filters.add(turn)
+            elif action == "5":
+                xProgram.listStudents()
             else:
                 elseval(action)
 
@@ -311,7 +315,7 @@ def favManager(mode):
             if action == "0":
                 return
             elif action in dict_:
-                fileManager(mode, dict_[action])
+                fileManager(mode, funcs.absPath(dict_[action]))
             elif args[0] in {"nav","add"}:
                 path = None
                 if args[0] == "nav":
@@ -343,12 +347,6 @@ def favManager(mode):
                 elseval(action)
 
 def dirManager(mode, path0="courses", nav=False):
-    dict_ = {
-        "save": "save in",
-        "load": "load from",
-    }
-    if nav:
-        dict_[mode][1] = "favorite"
     _vars.exitSubMenu = False
     while not _vars.exitSubMenu:
         if not os.path.isdir(path0):
@@ -481,6 +479,7 @@ def fileManager(mode, path="courses/", file=None):
                     break
             elif mode == "load":           
                 if funcs.loadData(file, path=path, ext=ext):
+                    _vars.exitSubMenu = True
                     break
         else:
             elseval(file)

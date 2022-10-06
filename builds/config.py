@@ -1,11 +1,13 @@
 options = {
     "name": "Courses",
     "version": "2.22",
-    "CleanRoom": False,
+    "CleanRoom": True,
+    "testProduct": False,
+    "noConfirm": False
 }
 
 LIB = {
-    "Launcher": "courseManager",
+    "Launcher": "CoursesManager",
     "libDir": "libraries",
     "enabled": True
 }
@@ -47,21 +49,17 @@ rarFiles = {
     "RAR": True,
     "exclude": [
         #"utils/data/certificate", Windows only
-        "*/docs",
-        "*/lang",
+        "*\docs",
+        "*\lang",
         "*.py",
         "*.pyc",
         "*.pyw",
     ],
     "include": [
         "utils/data/*",
-        #"../storage/docs/changelog.txt",
-        #"../storage/docs/!!! READ ME VERY IMPORTANT !!!.txt",
-        #"../src/resources",
     ],
     "empty": [
-        "mods",
-        "saves",
+        "courses",
     ]
 }
 
@@ -77,28 +75,18 @@ pyIns = {
         "xProgram",
         "core._vars",
         "core.menus",
-        "core.menu_funcs",
         "utils.funcs",
         "utils.alt_funcs",
     ],
     "hidden-imports": [
-        "certifi",
+        "asyncio",
         "cffi",
-        "charset_normalizer",
-        "cryptography",
-        "cryptography.fernet",
-        "idna",
-        "inflect",
-        "keyboard",
-        "pycparser",
-        "pydantic",
-        "pygame",
-        "pypresence",
-        "PySimpleGUI",
-        "requests",
+        "numpy",
+        "et_xmlfile",
+        "openpyxl",
         "sty",
-        "typing_extensions",
-        "urllib3",
+        "xlsxwriter",
+        "platform",
     ],
     "data": []
 }

@@ -45,7 +45,7 @@ def main():
         program()
         if not alt_funcs.isNew():
             while True:
-                print(f'{fg(240,190,25)}Do you want to save your current data?')
+                print(f'{fg(240,190,25)}Quieres guardar tus datos antes de salir?')
                 funcs.mPrint(f"[1].", "Yes", True)
                 funcs.mPrint(f"[2].", "No", True)
                 print()
@@ -77,8 +77,8 @@ def main():
             save = funcs.genFile("courses/crash", "recovery", ".wsa", sep=True, maxFiles=8)
             funcs.saveData(save, "courses/crash/")
         # Will dump a crash report
-        log = funcs.genFile("logs/crash", "report", ".txt", day=True)
-        with open(f"logs/crash/{log}.txt", 'w', encoding="utf-8") as f:
+        log = funcs.genFile("logs/", "report", ".txt", day=True)
+        with open(f"logs/{log}.txt", 'w', encoding="utf-8") as f:
             f.write("\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n")
             f.write("--- [WARNING] Something awful happened! ---\n")
             f.write(traceback.format_exc())

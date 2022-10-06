@@ -1,4 +1,4 @@
-### Wood Build ###
+### Build ###
 builds/*.spec
 builds/*.bat
 builds/config.py
@@ -7,7 +7,7 @@ builds/product
 builds/obfuscated
 builds/utils/temp
 
-### Wood Files ###
+### Files ###
 *.wsa
 *.wdc
 *.log
@@ -15,6 +15,8 @@ builds/utils/temp
 
 !et11.wsa
 !et11.xlsx
+!et12.xlsx
+!recovery_01.wsa
 
 test/logs/*
 

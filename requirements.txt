@@ -1,0 +1,4 @@
+et-xmlfile==1.1.0
+openpyxl==3.0.10
+sty==1.0.4
+XlsxWriter==3.0.3

@@ -76,7 +76,7 @@ def validateDNI(dni: str) -> bool:
             and dni[8] == CONTROL[int(dni[0:8]) % 23])
 
 def logo():
-    x, y = fg(128,40,106), fg(158,52,129)
+    x, y = fg(110,102,132), fg(89,75,128)
     print(fg(132,121,101) + "━"*59)
     print(f"  {x}█{y}█████  {x}█{y}█████  {x}█{y}█    {x}█{y}█ {x}█{y}█████  {x}█{y}██████ {x}█{y}██████ {x}█{y}██████ ")
     print(f" {x}█{y}█      {x}█{y}█    {x}█{y}█ {x}█{y}█    {x}█{y}█ {x}█{y}█   {x}█{y}█ {x}█{y}█      {x}█{y}█      {x}█{y}█      ")

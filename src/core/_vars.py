@@ -1,7 +1,7 @@
 import copy
 from sty import fg
 
-__VERSION__ = '2.1-beta'
+__VERSION__ = '2.2-beta'
 __COLORS__ = True
 
 def codeInit():
@@ -33,13 +33,17 @@ def configInit():
         },
         "options": {
             "menuLogo": True,
-            "clearMode": False,
+            "clearMode": True,
         },
         "other": {
             "cmdColors": True,
             "forceColors": False,
         },
-        "favorites": {},
+        "favorites": {
+            "Cursos": "courses/",
+            "Recovery": "courses/crash/",
+            "Documentos": "%USERPROFILE%/Documents/Courses/"
+        },
         "version": 1.0
     }
     config = copy.deepcopy(defaultCfg)

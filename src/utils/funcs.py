@@ -1,4 +1,4 @@
-import os, sys, copy, re
+import os, sys, copy, re, pickle
 if os.name == 'nt':
     import msvcrt
 else:
@@ -6,7 +6,7 @@ else:
     from select import select
 # Installed
 from sty import bg, ef, fg, rs
-import pickle, openpyxl, xlsxwriter
+import openpyxl, xlsxwriter
 # Program
 from core import _vars
 
@@ -135,6 +135,7 @@ def importVal(file):
                 _vars.courses[course] = {}
                 _vars.turns[course] = turn
             _vars.courses[course][dni] = data
+        _vars.refreshVars()
         return True
     except Exception:
         ExceptionCaught()
@@ -157,7 +158,7 @@ def loadVal(data, msg=False):
             alt_funcs.resetVars()
             for i in fileVars:
                 if i in _vars.defaultVars and i not in ["version","format"]:
-                    if isinstance(fileVars[i], dict):
+                    if isinstance(fileVars[i], dict) and i not in ["courses","turns"]:
                         _vars.var[i].update({k: v for k, v in fileVars[i].items() if k in _vars.defaultVars[i]})
                     else:
                         _vars.var[i] = fileVars[i]
@@ -199,6 +200,8 @@ def saveData(save, path=None, ext=".wsa"):
         warn("Ese archivo no existe.")
     except (PermissionError, OSError):
         warn("Eso no es un nombre valido.")
+    except (PermissionError, xlsxwriter.exceptions.FileCreateError):
+        warn("Este archivo esta en uso o no se puede editar.")
     except NameError:
         warn("Program variables were not initiated.")
     print()
@@ -534,17 +537,17 @@ def runCommand(cmd):
             menus.changeMenu("search")
         elif args[0].lower() in {"/save","/s"}:
             if len(args) == 2:
-                menus.fileVal("save", path="courses/", file=args[1])
+                menus.fileManager("save", path="courses/", file=args[1])
             elif len(args) > 2:
-                menus.fileVal("save", path=args[2], file=args[1])
+                menus.fileManager("save", path=args[2], file=args[1])
             else:
                 menus.saveMenu()
         elif args[0].lower() in {"/load","/l"}:
             if len(args) == 2:
-                menus.fileVal("load", path="courses/", file=args[1])
+                menus.fileManager("load", path="courses/", file=args[1])
             elif len(args) > 2:
                 path = "courses/crash" if args[2] == "crash" else args[2]
-                menus.fileVal("load", path=path, file=args[1])
+                menus.fileManager("load", path=path, file=args[1])
             else:
                 menus.loadMenu()
 
