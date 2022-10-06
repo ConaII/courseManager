@@ -24,7 +24,7 @@ def isWhole(string):
     try:
         int(float(string))
         return True
-    except (ValueError, OverflowError):
+    except (TypeError, ValueError, OverflowError):
         pass
 
 def isBool(string):
@@ -41,31 +41,45 @@ def getByIndex(list_, string, negative=True):
             return list_[index]
     return string
 
-# Search coincidences of items in dict/list.
-def lookup(where, string, list_=None):
+def lookup0(where, string):
     if string is None:
         return False
     for k in where:
-        if string.lower() == k.lower():
+        if any(string.lower() == f"{x}".lower() for x in k):
             return k
-    for k in where:
-        if f" {string.lower()}" in f" {k.lower()}":
-            if list_ and k not in list_:
-                continue
-            elif len(string) > 1:
+    for k in where:        
+        if any(f' {string.lower()}' in f' {f"{x}".lower()}' for x in k):
+            if len(string) > 1:
                 return k
     return False
 
-def formatAmount(amount, sep=None):
-    amount = int(amount)
-    if sep is None:
-        sep = _vars.formats["sep"]
-    style = {
-        0: amount,
-        1: f"{amount:,}".replace(",","|").replace(".",",").replace("|","."),
-        2: f"{amount:,}"
-    }
-    return style[sep]
+# Search coincidences of items in dict/list.
+def lookup(where, string):
+    if string is None:
+        return False
+    for k in where:
+        if string.lower() == f"{k}".lower():
+            return k
+    for k in where:
+        if f" {string.lower()}" in f" {f'{k}'.lower()}":
+            if len(string) > 1:
+                return k
+    return False
+
+def formatDNI(dni):
+    return f"{dni:,}".replace(',','.')
+
+
+#def formatAmount(amount, sep=None):
+#    amount = int(amount)
+#    if sep is None:
+#        sep = _vars.formats["sep"]
+#    style = {
+#        0: amount,
+#        1: f"{amount:,}".replace(",","|").replace(".",",").replace("|","."),
+#        2: f"{amount:,}"
+#    }
+#    return style[sep]
 
 def validateDNI(dni: str) -> bool:
     REGEXP = "[0-9]{8}[A-Z]"

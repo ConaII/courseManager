@@ -1,26 +1,23 @@
 import copy
-from sty import fg
 
-__VERSION__ = '2.3-beta'
+__VERSION__ = '2.3-pre'
 __COLORS__ = True
 
 def codeInit():
     global keepAlive, restart, opticalsRT
     global exitMenu, exitSubMenu, menu, menuFunc
-    global devMode, codeList
+    global devMode, turnList, menuList
     keepAlive, restart = True, False
     exitMenu, exitSubMenu = None, None
     menu, menuFunc = None, None
 
     devMode = True
+    turnList = ["Mañana", "Tarde", "Noche"]
+    menuList = ["main","options","settings","manage","search","modCourse","modStudent","nowhere"]
     opticalsRT = { # WARNING #
         "saveCfg": True,
         "loadCfg": True,
         "allowDev": True,
-    }
-    codeList = {
-        "turnList": ["Mañana", "Tarde", "Noche"],
-        "menuList": ["main","options","settings","manage","search","modCourse","modStudent","nowhere"]
     }
     configInit()
 
@@ -54,10 +51,8 @@ def varsInit():
     selected = [None, None]
     filters = set()
     defaultVars = {
-        "courses": {
-        },
-        "turns": {
-        },
+        "courses": {},
+        "turns": {},
         "format": 1.0,
         "version": __VERSION__
     }

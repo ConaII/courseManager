@@ -29,6 +29,8 @@ def menuLoop(funcMenu):
             mPrint("[3].", f"{fg(223,90,50)}Exportar datos", True)
             mPrint("[4].", f"{fg(30,130,240)}Opciones", True)
             print()
+            mPrint("[5].", f"{fg.li_blue}Buscador", True)
+            print()
             mPrint("[0].", f"{fg.li_red}[CERRAR]", True)
             print() 
             action = xinput()
@@ -51,6 +53,89 @@ def menuLoop(funcMenu):
                 saveMenu()
             elif action == "4":
                 changeMenu("options")
+            elif action == "5":
+                changeMenu("search")
+            else:
+                elseval(action)
+        while funcMenu == "manage" and not _vars.exitMenu:
+            course = _vars.selected[0]
+            if course is not None:
+                print(f"{fg(58,118,238)}Curso: {fg.li_grey}{course} {fg(114,78,220)}Turno: {fg.li_grey}{_vars.turns[course]}\n")
+            print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
+            mPrint("[1].", f"{fg(85,200,90)}Añadir curso", True)
+            mPrint("[2].", f"{fg(230,180,98)}Seleccionar curso", True)
+            mPrint("[3].", f"{fg(152,85,211)}Modificar curso", True)
+            mPrint("[4].", f"{fg(215,70,60)}Eliminar curso", True)
+            print()
+            mPrint("[5].", f"{fg.li_blue}Buscador", True)
+            print()
+            mPrint("[0].", f"{fg.li_red}[SALIR]", True)
+            print()
+            action = xinput()
+            if action == "0":
+                return
+            elif action == "1":
+                xProgram.addCourse()
+            elif action == "2":
+                xProgram.selCourse()
+            elif action == "3":
+                xProgram.modCourse()
+            elif action == "4":
+                xProgram.delCourse(course)
+            elif action == "5":
+                changeMenu("search")
+            else:
+                elseval(action)
+        while funcMenu == "search" and not _vars.exitMenu:
+            if not len(_vars.courses):
+                warn("No hay ningun curso añadido.\n")
+                return
+            elif not any(len(x) for x in _vars.courses):
+                warn("No hay ningun alumno añadido.\n")
+                return
+            if len(_vars.filters):
+                print(f"{fg.li_grey}Filtros: {', '.join(_vars.filters)}\n")
+            print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
+            mPrint("[1].", f"{fg(110,218,128)}Buscar DNI", True)
+            mPrint("[2].", f"{fg(152,85,211)}Buscar Nombre", True)
+            mPrint("[3].", f"{fg(235,173,98)}Filtrar por Curso", True)
+            mPrint("[4].", f"{fg(228,125,50)}Filtrar por Turno", True)
+            mPrint("[5].", f"{fg(30,170,106)}Listado de alumnos", True)
+            print()
+            mPrint("[6].", f"{fg(215,70,60)}Borrar filtros", True)
+            print()
+            mPrint("[0].", f"{fg.li_red}[SALIR]", True)
+            print()
+            action = xinput()
+            if action == "0":
+                return
+            elif action == "1":
+                xProgram.searchStudent("dni")
+            elif action == "2":
+                xProgram.searchStudent("name")
+            elif action == "3":
+                course = xProgram.selCourse(select=False, filters=True)
+                if course is not None:
+                    if course in _vars.filters:
+                        warn(f"Se elimino el curso {course} del filtro.\n")
+                        _vars.filters.remove(course)
+                    else:
+                        green(f"Se añadio el curso {course} al filtro.\n") 
+                        _vars.filters.add(course)
+            elif action == "4":
+                turn = xProgram.selTurn(filters=True)
+                if turn is not None:
+                    if turn in _vars.filters:
+                        warn(f"Se elimino el turno {turn} del filtro.\n")
+                        _vars.filters.remove(turn)
+                    else:
+                        green(f"Se añadio el turno {turn} al filtro.\n")
+                        _vars.filters.add(turn)
+            elif action == "5":
+                xProgram.listStudents()
+            elif action == "6":
+                _vars.filters = set()
+                warn("Se eliminaron todos los filtros.\n")
             else:
                 elseval(action)
         while funcMenu == "options" and not _vars.exitMenu:
@@ -160,88 +245,6 @@ def menuLoop(funcMenu):
                         elseval(action)
             else:
                 elseval(action)
-        while funcMenu == "manage" and not _vars.exitMenu:
-            course = _vars.selected[0]
-            if course is not None:
-                print(f"{fg(58,118,238)}Curso: {fg.li_grey}{course} {fg(114,78,220)}Turno: {fg.li_grey}{_vars.turns[course]}\n")
-            print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
-            mPrint("[1].", f"{fg(85,200,90)}Añadir curso", True)
-            mPrint("[2].", f"{fg(230,180,98)}Seleccionar curso", True)
-            mPrint("[3].", f"{fg(152,85,211)}Modificar curso", True)
-            mPrint("[4].", f"{fg(215,70,60)}Eliminar curso", True)
-            print()
-            mPrint("[5].", f"{fg.li_blue}Buscador", True)
-            print()
-            mPrint("[0].", f"{fg.li_red}[SALIR]", True)
-            print()
-            action = xinput()
-            if action == "0":
-                return
-            elif action == "1":
-                xProgram.addCourse()
-            elif action == "2":
-                xProgram.selCourse()
-            elif action == "3":
-                xProgram.modCourse()
-            elif action == "4":
-                xProgram.delCourse(course)
-            elif action == "5":
-                changeMenu("search")
-            else:
-                elseval(action)
-        while funcMenu == "search" and not _vars.exitMenu:
-            if not len(_vars.courses):
-                warn("No hay ningun curso añadido.\n")
-                return
-            elif not any(len(x) for x in _vars.courses):
-                warn("No hay ningun alumno añadido.\n")
-                return
-            if len(_vars.filters):
-                strList = ", ".join(_vars.filters)
-                print(f"Filtros: {strList}\n")
-            print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
-            mPrint("[1].", f"{fg(110,218,128)}Buscar DNI", True)
-            mPrint("[2].", f"{fg(152,85,211)}Buscar Nombre", True)
-            mPrint("[3].", f"{fg(235,173,98)}Filtrar por Curso", True)
-            mPrint("[4].", f"{fg(228,125,50)}Filtrar por Turno", True)
-            print()
-            mPrint("[5].", f"{fg(30,170,106)}Listado de alumnos", True)
-            mPrint("[6].", f"{fg(215,70,60)}Borrar filtros", True)
-            print()
-            mPrint("[0].", f"{fg.li_red}[SALIR]", True)
-            print()
-            action = xinput()
-            if action == "0":
-                return
-            elif action == "1":
-                xProgram.searchStudent("dni")
-            elif action == "2":
-                xProgram.searchStudent("name")
-            elif action == "3":
-                course = xProgram.selCourse(select=False, filters=True)
-                if course is not None:
-                    if course in _vars.filters:
-                        warn(f"Se elimino el curso {course} del filtro.\n")
-                        _vars.filters.remove(course)
-                    else:
-                        green(f"Se añadio el curso {course} al filtro.\n") 
-                        _vars.filters.add(course)
-            elif action == "4":
-                turn = xProgram.selTurn(filters=True)
-                if turn is not None:
-                    if turn in _vars.filters:
-                        warn(f"Se elimino el turno {turn} del filtro.\n")
-                        _vars.filters.remove(turn)
-                    else:
-                        green(f"Se añadio el turno {turn} al filtro.\n")
-                        _vars.filters.add(turn)
-            elif action == "5":
-                xProgram.listStudents()
-            elif action == "6":
-                _vars.filters = set()
-                warn("Se eliminaron todos los filtros.\n")
-            else:
-                elseval(action)
 
 def saveMenu():
     _vars.exitSubMenu = False
@@ -348,10 +351,10 @@ def favManager(mode):
 def dirManager(mode, path0="courses", nav=False):
     _vars.exitSubMenu = False
     while not _vars.exitSubMenu:
-        path1 = funcs.absPath(path0)
-        if not os.path.isdir(path1):
-            os.makedirs(path1, exist_ok=True)
-        dirList = [d.name for d in os.scandir(path1) if d.is_dir()]
+        path0 = funcs.absPath(path0).replace('\\','/')
+        if not os.path.isdir(path0):
+            os.makedirs(path0, exist_ok=True)
+        dirList = [d.name for d in os.scandir(path0) if d.is_dir()]
         strList = [f"{fg(90,170,238)}{funcs.get_super(i+1)}{fg(135)}'{v}'" for i, v in enumerate(dirList)]
         strList = f"{fg(90,170,238)}, ".join(strList)
         print(f"Path: {path0}\n") 
@@ -359,7 +362,8 @@ def dirManager(mode, path0="courses", nav=False):
             print(f"{fg.cyan}Introducir nombre o numero del directorio donde guardar.")
         else:
             print(f"{fg.cyan}Introducir nombre o numero del directorio donde cargar.")
-        print(f"  {fg.li_grey}(Usar / como un prefijo para buscar coincidencias)\n")
+        print()
+        print(f"  {fg.li_grey}(Usar / como un prefijo para buscar coincidencias)")
         print(f"{fg.grey}  (Usar cd como un comando para navegar o moverse a carpetas)\n")
         print(f" - {strList}")
         print()
@@ -377,29 +381,30 @@ def dirManager(mode, path0="courses", nav=False):
                 warn("No se encontraron coincidencias.\n")
             elif args[0] == "cd":
                 if len(args) > 1:
-                    path = funcs.absPath(f"{path0}/{' '.join(args[1:])}").replace('\\','/')
-                    if os.path.isdir(f"{path0}/{path}"):
+                    path = f' '.join(args[1:]).replace('\\','/')
+                    if os.path.isdir(funcs.absPath(f"{path0}/{path}")):
                         path0 = f"{path0}/{path}"
-                    elif os.path.isdir(path):
+                    elif os.path.isdir(funcs.absPath(path)):
                         path0 = path
                     else:
                         warn("Path invalido.\n")
                         continue
                 else:
                     warn("Uso: cd <dir/relative/path>")
-            elif os.path.isdir(f"{path0}/{path}"):
-                path = path.replace('\\','/')
+            elif os.path.isdir(funcs.absPath(f"{path0}/{path}")):
+                path = f"{path0}/{path}".replace('\\','/')
                 if nav:
-                    return f"{path0}/{path}"
+                    return path
                 else:
-                    fileManager(mode=mode, path=f"{path0}/{path}")
+                    fileManager(mode=mode, path=path)
                     break
-            elif not os.path.isdir(f"{path0}/{path}") and mode == "save":
-                os.makedirs(f"{path0}/{path}", exist_ok=True)
+            elif mode == "save":
+                os.makedirs(funcs.absPath(f"{path0}/{path}"), exist_ok=True)
         else:
             elseval(path)
 
 def fileManager(mode, path="courses/", file=None):
+    path = funcs.absPath(path).replace('\\','/')
     parse = True if isinstance(file, str) else False
     ext = ".wsa"
     if not path.endswith('/'):

@@ -1,6 +1,6 @@
 options = {
     "name": "Courses",
-    "version": "2.3-beta",
+    "version": "2.3",
     "CleanRoom": True,
     "testProduct": False,
     "noConfirm": False

@@ -119,11 +119,10 @@ def exportVal(workbook):
     for row_num, data in enumerate(data):
         worksheet.write_row(row_num+1, 0, data, ef)
 
-def importVal(file):
+def importVal(workbook):
     from utils import alt_funcs
     students = []
     try:
-        workbook = openpyxl.load_workbook(file)
         for row in workbook.worksheets[0].rows:
             students.append([cell.value for cell in row])
         if students == []:
@@ -137,8 +136,8 @@ def importVal(file):
             _vars.courses[course][dni] = data
         _vars.refreshVars()
         return True
-    except Exception:
-        ExceptionCaught()
+    except Exception as e:
+        raise e
 
 def saveVal(data=None):
     if data is None:
@@ -223,13 +222,15 @@ def loadData(save, path=None, ext='.wsa'):
                     green(f"Se cargo el archivo {save}{ext}.\n")
                     return True
         elif ext == '.xlsx':
-            if importVal(saveFile):
+            if importVal(openpyxl.load_workbook(saveFile)):
                 green(f"Se cargo el excel {save}{ext}\n")
                 return True
+        return False
     except FileNotFoundError:
-        red("That save file doesn't exist.\n")
+        warn("Ese archivo no existe.")
     except (PermissionError, OSError):
-        red("That's not a valid name for your save file.\n")
+        warn("Eso no es un nombre valido.")
+    print()
 
 def restoreConfig(key, sub_key=None, da_key=None, msg=True):
     if sub_key is None:
@@ -309,7 +310,7 @@ def yellow(text, cancel=False):
         print(f"{fg(255,236,0)}{bg.rs}{text}{rs.all}")
 
 # Custom print function for menus.
-def mPrint(num, text, menu=False):
+def mPrint(num, text, menu=False, index=False):
     if None in (num, text):
         return
     color0 = fg.rs if menu else fg(116,190,245)
@@ -493,6 +494,10 @@ def runCommand(cmd):
                         print(f" {fg.li_cyan}/modstudent  {fg(240,190,25)}-{fg.grey} Modify selected student from selected course.")
                         print(f" {fg.li_cyan}/delstudent  {fg(240,190,25)}-{fg.grey} Select and delete a student.")
                         print()
+                        print(f" {fg.li_cyan}/listall  {fg(240,190,25)}-{fg.grey} List all students.")
+                        print(f" {fg.li_cyan}/searchdni  {fg(240,190,25)}-{fg.grey} Search students by DNI.")
+                        print(f" {fg.li_cyan}/searchname  {fg(240,190,25)}-{fg.grey} Search students by NAME.")
+                        print()
                     if args[1].lower() in {"misc","all"} or args[1] == "3":
                         print(f"{fg.cyan}::{fg.magenta}--{fg(240,210,40)}HELP {fg.da_grey}({fg(38,111,211)}Misc{fg.da_grey}){fg.magenta}--{fg.cyan}::")
                         print(f" {fg.li_cyan}/exit          {fg(240,190,25)}-{fg.grey} Exit the program.")
@@ -571,6 +576,12 @@ def runCommand(cmd):
             xProgram.modStudent()
         elif args[0].lower() == "/delstudent":
             xProgram.delStudent(xProgram.listStudents(select=False))
+        elif args[0].lower() == "/listall":
+            xProgram.listStudents()
+        elif args[0].lower() == "/searchdni":
+            xProgram.searchStudent("dni")
+        elif args[0].lower() == "/searchname":
+            xProgram.searchStudent("name")
 
 #-----------------#
 ## Misc Commands ##
@@ -830,7 +841,7 @@ def runCommand(cmd):
                 usage = True
                 if len(args) > 1:
                     name = args[1].lower()
-                    menu_id = alt_funcs.lookup(_vars.codeList["menuList"], name)
+                    menu_id = alt_funcs.lookup(_vars.menuList, name)
                     if menu_id is not False:
                         print(f"{fg.li_blue}Teleported to menu {menu_id}{fg.rs}")
                         print()
