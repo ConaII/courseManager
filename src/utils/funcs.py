@@ -1,11 +1,12 @@
-import os, sys
+import os, sys, copy
 if os.name == 'nt':
     import msvcrt
 else:
     import termios, atexit
     from select import select
 # Installed
-from sty import *
+from sty import bg, ef, fg, rs
+import pickle
 # Program
 from core import _vars
 
@@ -39,6 +40,70 @@ class lxTerm:
             dr,dw,de = select([sys.stdin], [], [], 0)
             return dr != []
 
+def restoreConfig(key, sub_key=None, da_key=None, msg=True):
+    if sub_key is None:
+        _vars.config[key] = copy.deepcopy(_vars.defaultCfg[key])
+        target = f"{key}"
+    elif da_key is None:
+        _vars.config[key][sub_key] = copy.deepcopy(_vars.defaultCfg[key][sub_key])
+        target = f"{sub_key}"
+    else:
+        _vars.config[key][sub_key][da_key] = copy.deepcopy(_vars.defaultCfg[key][sub_key][da_key])
+        target = f"{da_key} of {sub_key}"
+    if msg:
+        green(f"Config {target} was restored to default.\n")
+    _vars.refreshCfg()
+
+def resetConfig():
+    _vars.config = copy.deepcopy(_vars.defaultCfg)
+    green(f"Config was restored to default.")
+    print()
+    _vars.refreshCfg()
+
+def saveConfig(msg=False):
+    if _vars.opticalsRT["saveCfg"]:
+        with open("config.wdc", 'wb') as f:
+            pickle.dump(_vars.config, f)
+        if msg:
+            green(f"Current Config was saved successfully.")
+            print()
+
+def loadConfig(msg=True):
+    if _vars.opticalsRT["loadCfg"]:
+        try:
+            with open("config.wdc", 'rb') as f:
+                tempConfig = pickle.load(f)
+                if not isinstance(tempConfig, dict):
+                    raise TypeError
+                for i in tempConfig:
+                    if i in _vars.config and i not in ["version","format"]:
+                        if isinstance(tempConfig[i], dict) :
+                                _vars.config[i].update({k: v for k, v in tempConfig[i].items() if k in _vars.defaultCfg[i]})
+                        else:
+                            _vars.config[i] = tempConfig[i]
+                if _vars.config["other"]["forceColors"]:
+                    _vars.__COLORS__ = _vars.config["other"]["cmdColors"]
+            if msg:
+                green(f"Config loaded successfully.")
+                print()
+        except FileNotFoundError:
+            if msg:
+                green(f"Config created successfully.")
+                print()
+            saveConfig()
+        except (FileNotFoundError, TypeError, EOFError) as e:
+            if msg:
+                if isinstance(e, TypeError):
+                    ErrType = "outdated-config"
+                elif isinstance(e, EOFError):
+                    ErrType = "empty-file"
+                else:
+                    ErrType = "unknown-err"
+                red(f"Config conflict detected: {ErrType}, resetting to default.")
+                print()
+            saveConfig()
+        _vars.refreshCfg()
+
 def warn(text, cancel=False):
     if not cancel:
         print(f"{fg.li_red}{text}{fg.rs}")
@@ -57,11 +122,19 @@ def mPrint(num, text, menu=False):
     if None in (num, text):
         return
     color0 = fg.rs if menu else fg(116,190,245)
-    print(f" {color0}{num} {fg.cyan}{text}{fg.rs}")
+    value = _vars.formats["spaces"][0]
+    if menu == "index":
+        value = _vars.formats["spaces"][1]
+    menuFormats = {
+        0: "",
+        1: " "
+    }
+    print(menuFormats[value] + f"{color0}{num} {fg.cyan}{text}{fg.rs}")
 
 def elseval(action=False):
     if action is not None and action != "":
         warn("Operación inválida, inténtalo de nuevo.\n")
+
 # Clear console function.
 def clear(space=True):
     if sys.stdin and sys.stdin.isatty():
@@ -79,6 +152,41 @@ def strToBool(string):
             return True
         if string.lower() in {"false","0"}:
             return False
+
+def intInput(replace=False):
+    try:
+        action = xinput(False, ">>", fg(240,70,140))
+        if replace:
+            action = action.replace('.','_')
+        return int(float(action))
+    except (ValueError, OverflowError):
+        warn("Debes introducir un valor numerico.\n")
+
+def xinput(allowCMD=True, sep=">>>", color=fg(0, 148, 255), color2=rs.all):
+    try:
+        try: 
+            if _vars.__COLORS__:
+                sys.__stdout__.write(f"{color}{sep}{color2} ")
+            else:
+                sys.__stdout__.write(f"{sep} ")
+            cmd = input().strip()
+            print()
+        except EOFError:
+            sys.__stdout__.write("\n")
+            red("Invalid input. EOF is not supported.\n")
+            return
+        if _vars.OPCIONES["clearMode"]:
+            if allowCMD and len(cmd) >= 10 and cmd[:10] == "/clearmode":
+                if len(cmd) > 10 and cmd[10:].split()[0].lower() not in {"true","1","false","0"}:
+                    clear()
+            else:
+                clear()
+        if allowCMD and len(cmd) > 0 and cmd[0] == "/":
+            runCommand(cmd)
+            return None
+        return cmd
+    except Exception as e:
+        ExceptionCaught(e)
 
 def ExceptionCaught(e, doTraceback=True, lines=True):
     import traceback
@@ -102,36 +210,6 @@ def ExceptionCaught(e, doTraceback=True, lines=True):
             print("____________________________________________________________")
         print()
 
-def xinput(allowCMD=True, sep=f">>>", color=fg(0, 148, 255), color2=rs.all):
-    try:
-        try: 
-            if _vars.__COLORS__:
-                sys.__stdout__.write(f"{color}{sep}{color2} ")
-            else:
-                sys.__stdout__.write(f"{sep} ")
-            cmd = input().strip()
-        except Exception as e: 
-            sys.__stdout__.write("\n")
-            raise e
-        print()
-    except (EOFError, ValueError) as e:
-        if len(e.args) > 0 and e.args[0] in "EOF when reading a line":
-            red("Invalid input. EOF is not supported.\n")
-        elif len(e.args) > 0 and e.args[0] in "No closing quotation":
-            red("Invalid input. No closing quotation.\n")
-        else:
-            ExceptionCaught(e)
-    if allowCMD and len(cmd) > 0 and cmd[0] == "/":
-        runCommand(cmd)
-        return None
-    return cmd
-
-def intInput():
-    try:
-        return int(float(xinput(False)))
-    except (ValueError, OverflowError):
-        warn("Debes introducir un valor numerico.\n")
-
 def runCommand(cmd):
     from core import _vars, menus
     from utils import alt_funcs
@@ -143,12 +221,10 @@ def runCommand(cmd):
         return
     if isinstance(args, list):
         if args[0].lower() in {"/exit","/quit","/leave","/close","/shutdown"}:
-            _vars.room = None
             _vars.exitMenu = True
             _vars.exitSubMenu = True
             _vars.keepAlive = False
         elif args[0].lower() in {"/restart","/reboot","/reset"}:
-            _vars.room = None
             _vars.restart = True
             _vars.exitMenu = True
             _vars.exitSubMenu = True

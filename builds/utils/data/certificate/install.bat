@@ -1,5 +1,5 @@
 @echo off
-title Wood Certificate Installer
+title Certificate Installer
 call :setESC    
 call :START
 
@@ -8,11 +8,11 @@ call :START
 cls
 echo.
 echo %ESC%[91m ##################################
-echo %ESC%[91m #   %ESC%[96mWOOD CERTIFICATE INSTALLER   %ESC%[91m#
+echo %ESC%[91m #   %ESC%[CERTIFICATE INSTALLER   %ESC%[91m#
 echo %ESC%[91m ##################################
 echo.
-echo %ESC%[31m:: %ESC%[36mThis script will install a windows certificate signature for Wood.
-echo %ESC%[31m:: %ESC%[36mIt should allow to execute Wood without falsely prompting your antivirus.
+echo %ESC%[31m:: %ESC%[36mThis script will install a windows certificate signature for coursesManager.
+echo %ESC%[31m:: %ESC%[36mIt should allow to execute coursesManager without falsely prompting your antivirus.
 echo %ESC%[31m:: %ESC%[36mSince this is a Self-Asigned digital signature, we need you to allow it to be installed.
 echo %ESC%[31m:: %ESC%[36mUsing an approved authority certificate would cost money, so this is the only way.
 echo. 
@@ -26,7 +26,7 @@ SET /p input="%ESC%[31m>> %ESC%[0m"
  )
 
 :SCRIPT
-powershell Import-Certificate -FilePath woodcert.crt -CertStoreLocation cert:\CurrentUser\Root
+powershell Import-Certificate -FilePath certificate.crt -CertStoreLocation cert:\CurrentUser\Root
 goto FINISH
 
 

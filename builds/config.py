@@ -1,11 +1,11 @@
-options = {
-    "name": "Wood",
-    "version": "2.0snap1-b4",
+OPCIONES = {
+    "name": "courses",
+    "version": "1.0-rc",
     "CleanRoom": True,
 }
 
 LIB = {
-    "Launcher": "WoodLauncher",
+    "Launcher": "courseManager",
     "libDir": "libraries",
     "enabled": True
 }
@@ -37,7 +37,7 @@ hyperion = {
     "ProtectChunks": False,
     "folders": {
         "../src": "",
-        "../src/game": "game",
+        "../src/core": "core",
         "../src/utils": "utils"
     }
 }
@@ -57,16 +57,16 @@ rarFiles = {
     ],
     "include": [
         "utils/data/*",
-        "../changelog.txt",
-        "../src/resources",
+        #"../storage/docs/changelog.txt",
+        #"../storage/docs/!!! READ ME VERY IMPORTANT !!!.txt",
+        #"../src/resources",
     ],
     "empty": [
-        "mods",
-        "saves",
+        "courses",
     ]
 }
 
-#https://pyinstaller.org/en/stable/usage.html#options
+#https://pyinstaller.org/en/stable/usage.html#OPCIONES
 #https://pyinstaller.org/en/stable/usage.html#what-to-bundle-where-to-search
 pyIns = {
     "script": "./obfuscated/Master.py",
@@ -75,14 +75,13 @@ pyIns = {
     "temp": "./utils/temp",
     "icon": "../storage/icons/wood.ico",
     "file-imports": [
-        "xGame",
+        "xProgram",
         "game._vars",
         "game.menus",
         "game.menu_funcs",
         "utils.funcs",
         "utils.alt_funcs",
         "utils.game_funcs",
-        "utils.thread_funcs"
     ],
     "hidden-imports": [
         #"windows-curses",

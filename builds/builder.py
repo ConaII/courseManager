@@ -4,7 +4,7 @@ from utils.funcs import *
 import config
 
 def title():
-    title = f"pyBuilder v2.0"
+    title = f"pyBuilder v2.1"
     if os.name == 'nt':
         import ctypes
         try:
@@ -38,9 +38,9 @@ def main():
             log(f'  "{config.pyPaths["Py64"]}" -m pip install pyinstaller\n')
             config.modules["64Bits"] = False
     while True:
-        print(f'{fg(160,85,212)}Version: {config.options["version"]}')
+        print(f'{fg(160,85,212)}Version: {config.OPCIONES["version"]}')
         print()
-        print(f"{fg.magenta}-----<< {fg(240,210,40)}OPTIONS {fg.magenta}>>-----{fg.rs}")
+        print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----{fg.rs}")
         mPrint(f"[1].", f"{fg(93)}Obfuscate Code")
         mPrint("[2].", f"{fg(27)}EXECompiler")
         mPrint("[3].", f"{fg(11)}EXESigner")
@@ -56,23 +56,23 @@ def main():
             obfuscate()
         elif action == "2":
             if config.modules["64Bits"]:
-                build()
+                build(x64=True)
             elif config.modules["32Bits"]:
-                build(x86=True)
+                build()
             else:
                 warn("[WARN] Enable a build architecture first\n")
         elif action == "3":
             if config.modules["64Bits"]:
-                signer()
+                signer(x64=True)
             elif config.modules["32Bits"]:
-                signer(x86=True)
+                signer()
             else:
                 warn("[WARN] Enable a build architecture first\n")
         elif action == "4":
             if config.modules["64Bits"]:
-                rar()
+                rar(x64=True)
             elif config.modules["32Bits"]:
-                rar(x86=True)
+                rar()
             else:
                 warn("[WARN] Enable a build architecture first\n")
         elif action == "/reload":
@@ -97,9 +97,20 @@ def obfuscate():
             if file == "__init__.py":
                 shutil.copy2(f"{k}/{file}", f"obfuscated/{v}")
                 continue
+            elif False:
+                with open(f"{k}/{file}", 'r') as f:
+                    data = f.read()
+                defaults = {}
+                for ks, vs in defaults.items():
+                    data = data.replace(f"{ks} {not vs}", f"{ks} {vs}")
+                with open(f"utils/{file}", 'w') as f:
+                    f.write(data)
+                path = f"utils/{file}"
             cmd = ['python.exe', config.pyPaths["hyperion"], f'--file="{path}"', f'--destiny="obfuscated/{v}"', '--rename=False', f'-sr={not config.hyperion["RenameVars"]}', f'-sc={not config.hyperion["ProtectChunks"]}', f'-auto={config.hyperion["automatic"]}', '-logo=False']
             subprocess.run(cmd)
             print(fg.rs, end='')
+    if os.path.isfile("utils/_vars.py"):
+        os.remove("utils/_vars.py")
     if config.hyperion["doTesting"]:
         try:
             child = subprocess.Popen(['py', 'Master.py'], cwd="obfuscated", creationflags=subprocess.CREATE_NEW_CONSOLE)
@@ -112,10 +123,10 @@ def obfuscate():
     title()
 
 
-def build(x86=False):
-    fullname = f'{config.options["name"]} v{config.options["version"]}'
-    if x86:
-        fullname += "_x86"
+def build(x64=False):
+    fullname = f'{config.OPCIONES["name"]} v{config.OPCIONES["version"]}'
+    if x64:
+        fullname += "_x64"
     product = f'{config.pyIns["output"]}/{fullname}'
     code = []
     if config.modules["OneFile"]:
@@ -126,30 +137,28 @@ def build(x86=False):
     try:
         print(fg.li_blue, end='')
         print("╔==============================╗")
-        print("│      Building %sBits...      │" % "32" if x86 else "64")
+        print("│      Building %sBits...      │" % "64" if x64 else "32")
         print("╚==============================╝")
         print(fg.cyan)
-        if x86:
-            subprocess.run([f'{config.pyPaths["Ins32"]}', f'--name={fullname}', *code, config.pyIns["script"]])
-        else:
+        if x64:
             subprocess.run([f'{config.pyPaths["Ins64"]}', f'--name={fullname}', *code, config.pyIns["script"]])
+        else:
+            subprocess.run([f'{config.pyPaths["Ins32"]}', f'--name={fullname}', *code, config.pyIns["script"]])
         if config.modules["OneLib"] and not config.modules["OneFile"]:
             if os.path.isfile(f'{product}/{fullname}.exe'):
-                os.rename(f'{product}/{fullname}.exe', f'{product}/{config.options["name"]}.exe')
+                os.rename(f'{product}/{fullname}.exe', f'{product}/{config.OPCIONES["name"]}.exe')
             if not os.path.isdir(f'{product}/{config.LIB["libDir"]}'):
                 os.mkdir(f'{product}/{config.LIB["libDir"]}')
-            files = [f.name for f in os.scandir(product) if f.name.endswith((".pyd",".zip",".dll")) or f.name == f'{config.options["name"]}.exe' or f.is_dir() and f.name != config.LIB["libDir"]]
+            files = [f.name for f in os.scandir(product) if f.name.endswith((".pyd",".zip",".dll")) or f.name == f'{config.OPCIONES["name"]}.exe' or f.is_dir() and f.name != config.LIB["libDir"]]
             for i in files:
                 if i.endswith("-info"):
-                    os.remove(i)
+                    shutil.rmtree(f'{product}/{i}')
                 else:
                     shutil.move(f'{product}/{i}',f'{product}/{config.LIB["libDir"]}/{i}')
             if os.path.isfile(f'utils/wrapper/{config.LIB["Launcher"]}.exe'):
                 shutil.copy(f'utils/wrapper/{config.LIB["Launcher"]}.exe', product)
         print(fg.rs)
-        if config.options["CleanRoom"]:
-            if os.path.isfile(f"{fullname}_x86.spec"):
-                os.remove(f"{fullname}_x86.spec")
+        if config.OPCIONES["CleanRoom"]:
             if os.path.isfile(f"{fullname}.spec"):
                 os.remove(f"{fullname}.spec")
             if os.path.isdir(config.pyIns["temp"]):
@@ -157,25 +166,23 @@ def build(x86=False):
     except Exception as e:
         warn(f"{e}\n")
 
-def signer(x86=False):
-    warn("Currently Disabled")
-    return
+def signer(x64=False):
     if not os.path.isfile(config.pyPaths["signer"]):
         print("https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk/")
         print("Mount the ISO and open up the [Installers] folder and install the appropriate msi for [Windows App Certification Kit]")
         print("Example: Windows App Certification Kit x64-x86_en-us.msi, which installs the executable to C:/Program Files (x86)/Windows Kits/10/App Certification Kit/signtool.exe\n")
         return
     else:
-        fullname = f'{config.options["name"]} v{config.options["version"]}'
-        if x86:
-            fullname += "_x86"
-        cmd = [config.pyPaths["signer"], 'sign', '/fd', 'SHA256', '/f', 'cert_path.pfx', '/p', 'password']
+        fullname = f'{config.OPCIONES["name"]} v{config.OPCIONES["version"]}'
+        if x64:
+            fullname += "_x64"
+        cmd = [config.pyPaths["signer"], 'sign', '/fd', 'SHA256', '/f', '../storage/private/woodcert_private.pfx', '/p', 'wood_enable_CERTPAPU23958']
         dirs = [
             '.exe',
-            f'/{config.options["name"]}.exe',
+            f'/{config.OPCIONES["name"]}.exe',
             f'/{config.LIB["Launcher"]}.exe',
             f'/{fullname}.exe',
-            f'/{config.LIB["libDir"]}/{config.options["name"]}.exe',
+            f'/{config.LIB["libDir"]}/{config.OPCIONES["name"]}.exe',
         ]
     try:
         print(fg(11), end='')
@@ -190,15 +197,13 @@ def signer(x86=False):
     except Exception as e:
         warn(f"{e}\n")
 
-def rar(x86=False):
-    warn("Currently Disabled")
-    return
+def rar(x64=False):
     if not os.path.isdir("dist"):
         os.mkdir("dist")
-    fullname = f'{config.options["name"]} v{config.options["version"]}'
+    fullname = f'{config.OPCIONES["name"]} v{config.OPCIONES["version"]}'
     excluded = list(f"-x{i}" for i in config.rarFiles["exclude"])
-    if x86:
-        fullname += "_x86"
+    if x64:
+        fullname += "_x64"
     product = f'{config.pyIns["output"]}/{fullname}'
     #if config.rarFiles["7Zip"]:
     #    cmd = [config.pyPaths["7zip"], "a"]

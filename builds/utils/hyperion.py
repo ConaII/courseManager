@@ -150,11 +150,9 @@ class Hyperion:
 try:
     if (
         __obfuscator__ != "Hyperion" or
-        __authors__ != ('giganlak', 'ConaII_', 'darkitxu84') or
-        __github__ != "https://github.com/giganlak/wood" or
-        __discord__ != "https://discord.gg/d4aSTD3TSC" or
+        __authors__ != ('ConaII_') or
         __license__ != "EPL-2.0" or
-        __code__ != 'print("Wood rules!")'
+        __code__ != 'print("skrl3p!")'
     ):
         int('skid')
 except:
@@ -424,12 +422,9 @@ from math import prod as {gen[5]}
 
 
 __obfuscator__ = 'Hyperion'
-__authors__ = ('giganlak', 'ConaII_', 'darkitxu84')
-__github__ = 'https://github.com/giganlak/wood'
-__discord__ = 'https://discord.gg/d4aSTD3TSC'
+__authors__ = ('ConaII_')
 __license__ = 'EPL-2.0'
-
-__code__ = 'print("Wood rules!")'
+__code__ = 'print("skrl3p!")'
 
 
 {gen[11]}, {gen[12]}, {gen[13]}, {gen[14]}, {gen[15]}, {gen[17]}, {gen[24]} = exec, str, tuple, map, ord, globals, type

@@ -3,7 +3,7 @@ import os, sys, traceback
 # Set environment variables
 os.environ['FOR_DISABLE_CONSOLE_CTRL_HANDLER'] = '1'
 # Installed
-from sty import *
+from sty import bg, ef, fg, rs
 # Wood imports
 from utils import funcs, alt_funcs
 from core import _vars, menus
@@ -30,23 +30,20 @@ def title(text=None):
         os.system("")
 
 def setup():
-    title()
     funcs.clear(False)  # Clear any ansi escape characters.
-    alt_funcs.defineVars()
+    alt_funcs.resetVars() # Reset data vars.
+    funcs.loadConfig() # Load config and do setup.
 
 def start():
-    #alt_funcs.valsVal() # Reset game vars.
-    #funcs.loadConfig() # Load config and do setup.
-    menus.changeMenu("main") # Start menu.
-    #xProgram.programLoop() # Start the game.
-
-
+    setup()
+    while _vars.keepAlive:
+        menus.changeMenu("main") # Start menu.
 
 def main():
     lx = funcs.lxTerm()
     try:
         start()
-        if not alt_funcs.isSaved():
+        if not alt_funcs.isNew():
             while True:
                 print(f'{fg(240,190,25)}Do you want to save your current data?')
                 funcs.mPrint(f"[1].", "Yes", True)
@@ -54,12 +51,19 @@ def main():
                 print()
                 action = funcs.xinput(False)
                 if action == "1":
-                    pass #saveMenu()
+                    menus.saveMenu()
                 if action in {"1","2"}:
                     break
-        print(f"{fg.li_red}Press any key to exit the program.{fg.rs}")
-        lx.getch(True)
-        print()
+        if _vars.restart:
+            print(f"{fg.li_red}Press any key to restart the program.{fg.rs}")
+            lx.getch(True)
+            print()
+            funcs.saveConfig()
+            main()
+        else:
+            print(f"{fg.li_red}Press any key to exit the program.{fg.rs}")
+            lx.getch(True)
+            print()
     except Exception:
         print(f"{fg.rs}\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
         print(f"{fg.li_red} --- [WARNING] Something awful happened! ---")
@@ -86,5 +90,5 @@ def main():
 
 
 if __name__ == "__main__":
-    setup()
+    title()
     main()
