@@ -29,13 +29,6 @@ def isBool(string):
     if isinstance(string, str) and string.lower() in {"true", "1", "false", "0"}:
         return True
 
-def indexVal(list_, string):
-    if isWhole(string):
-        n = int(float(string))
-        if len(list_) > n-1 and n > 0:
-            return n-1
-    return False
-
 def getByIndex(list_, string, negative=True):
     if isWhole(string):
         n = int(float(string))
@@ -46,8 +39,20 @@ def getByIndex(list_, string, negative=True):
             return list_[index]
     return string
 
-def filterCourses(turns):
-    return [x for x in _vars.courses if _vars.turns[x] in turns]
+# Search coincidences of items in dict/list.
+def lookup(where, string, list_=None):
+    if string is None:
+        return False
+    for k in where:
+        if string.lower() == k.lower():
+            return k
+    for k in where:
+        if f" {string.lower()}" in f" {k.lower()}":
+            if list_ and k not in list_:
+                continue
+            elif len(string) > 1:
+                return k
+    return False
 
 def formatAmount(amount, sep=None):
     amount = int(amount)
@@ -69,3 +74,14 @@ def validateDNI(dni: str) -> bool:
     return (dni not in INVALID
             and re.match(REGEXP, dni) is not None 
             and dni[8] == CONTROL[int(dni[0:8]) % 23])
+
+def logo():
+    x, y = fg(128,40,106), fg(158,52,129)
+    print(fg(132,121,101) + "━"*59)
+    print(f"  {x}█{y}█████  {x}█{y}█████  {x}█{y}█    {x}█{y}█ {x}█{y}█████  {x}█{y}██████ {x}█{y}██████ {x}█{y}██████ ")
+    print(f" {x}█{y}█      {x}█{y}█    {x}█{y}█ {x}█{y}█    {x}█{y}█ {x}█{y}█   {x}█{y}█ {x}█{y}█      {x}█{y}█      {x}█{y}█      ")
+    print(f" {x}█{y}█      {x}█{y}█    {x}█{y}█ {x}█{y}█    {x}█{y}█ {x}█{y}█████  {x}█{y}██████ {x}█{y}████   {x}█{y}██████ ")
+    print(f" {x}█{y}█      {x}█{y}█    {x}█{y}█ {x}█{y}█    {x}█{y}█ {x}█{y}█   {x}█{y}█      {x}█{y}█ {x}█{y}█           {x}█{y}█ ")
+    print(f"  {x}█{y}█████  {x}█{y}█████   {x}█{y}█████  {x}█{y}█   {x}█{y}█ {x}█{y}██████ {x}█{y}██████ {x}█{y}██████ ")
+    print(fg(132,121,101) + "━"*59)
+    print()

@@ -10,10 +10,10 @@ from utils.funcs import *
 #        self.DNI = DNI
 #        self.Name = Name
 
-def selTurn(filters=set()):
-    c1 = fg(228,78,56) if "Mañana" in filters else fg.cyan
-    c2 = fg(228,78,56) if "Tarde" in filters else fg.cyan
-    c3 = fg(228,78,56) if "Noche" in filters else fg.cyan
+def selTurn(filters=False):
+    c1 = fg(228,78,56) if filters and "Mañana" in _vars.filters else fg.cyan
+    c2 = fg(228,78,56) if filters and "Tarde" in _vars.filters else fg.cyan
+    c3 = fg(228,78,56) if filters and "Noche" in _vars.filters else fg.cyan
     while True:
         print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
         mPrint("[1].", f"{c1}Mañana", True)
@@ -22,7 +22,7 @@ def selTurn(filters=set()):
         print()
         mPrint("[0].", f"{fg.li_red}[SALIR]", True)
         print()
-        action = xinput(False)
+        action = xinput()
         if action == "0":
             break
         elif action in {"1","2","3"}:
@@ -53,7 +53,7 @@ def addCourse():
 
 def delCourse(course):
     while True:
-        red("Estas seguro? Esta accion no se podra deshacer.")
+        red(f"Quiere eliminar {course}? Esta accion no se podra deshacer.")
         mPrint("[1].", "Confirmar", True)
         mPrint("[2].", "Volver", True)
         print()
@@ -70,37 +70,8 @@ def delCourse(course):
         else:
             elseval(action)
 
-
-def selCourse(select=True, filters=set()):
-    indexList = list(_vars.courses)
-    while True:
-        print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
-        for i,x in enumerate(indexList):
-            if x in filters:
-                mPrint(f"[{i+1}].", f"{fg(228,78,56)}{x}")
-            else:
-                mPrint(f"[{i+1}].", x)
-        print()
-        mPrint("[0].", f"{fg.li_red}[SALIR]", True)
-        print()
-        action = xinput(False).replace('°','º').replace('-','º')
-        course = alt_funcs.getByIndex(indexList, action)
-        if course is None:
-            pass
-        elif action == "0":
-            #_vars.selected[0] = None
-            return
-        elif course in indexList:
-            if not select:
-                return course
-            else:
-                _vars.selected[0] = course
-                return
-        else:
-            elseval(action)
-
 def modCourse():
-    _vars.exitMenu = False  
+    _vars.exitMenu = False
     while not _vars.exitMenu:
         course, student = _vars.selected
         if course is None:
@@ -146,6 +117,34 @@ def modCourse():
         else:
             elseval(action)
 
+def selCourse(select=True, filters=False):
+    indexList = list(_vars.courses)
+    while True:
+        print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
+        for i,x in enumerate(indexList):
+            if x in _vars.filters and filters:
+                mPrint(f"[{i+1}].", f"{fg(228,78,56)}{x}", "index")
+            else:
+                mPrint(f"[{i+1}].", x, "index")
+        print()
+        mPrint("[0].", f"{fg.li_red}[SALIR]", True)
+        print()
+        action = xinput()
+        if action is not None: action = action.replace('°','º').replace('-','º')
+        course = alt_funcs.getByIndex(indexList, action)
+        if course is None:
+            pass
+        elif action == "0":
+            return
+        elif course in indexList:
+            if not select:
+                return course
+            else:
+                _vars.selected[0] = course
+                return
+        else:
+            elseval(action)
+
 def addStudent(course):
     name, dni = None
     while True:
@@ -159,9 +158,12 @@ def addStudent(course):
                 name = None
         elif len(name):
             print("Introducir DNI:\n")
-            dni = intInput(True)
+            dni = intInput(True, True)
             if dni == 0:
                 break
+            elif dni == "":
+                print("Puedes salir de este menu introduciendo '0'\n")
+                dni = None
             elif dni is not None and dni > 0:
                 if dni in _vars.courses[course]:
                     warn("El DNI introducido ya esta registrado.\n")
@@ -174,7 +176,7 @@ def addStudent(course):
 
 def delStudent(course, student):
     while True:
-        red("Estas seguro? Esta accion no se podra deshacer.")
+        red(f"Quiere eliminar a {_vars.courses[course][student]}? Esta accion no se podra deshacer.")
         mPrint("[1].", "Confirmar", True)
         mPrint("[2].", "Volver", True)
         print()
@@ -189,30 +191,9 @@ def delStudent(course, student):
         else:
             elseval(action)
 
-def selStudent(course):
-    indexList = list(_vars.courses[course])
-    while True:
-        print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
-        for i,x in enumerate(indexList):
-            mPrint(f"[{i+1}].", f"{_vars.courses[course][x][0]} {fg.li_grey}{alt_funcs.formatAmount(x, 1)}")
-        print()
-        mPrint("[0].", f"{fg.li_red}[SALIR]", True)
-        print()
-        action = xinput(False)
-        student = alt_funcs.getByIndex(indexList, action)
-        if student is None:
-            pass
-        elif action == "0":
-            return
-        elif student in indexList:
-            _vars.selected[1] = student
-            return
-        else:
-            elseval(student)
-
 def modStudent():
     _vars.exitMenu = False
-    while not _vars.exitSubMenu:
+    while not _vars.exitMenu:
         course, student = _vars.selected
         if None in {course, student}:
             return
@@ -264,15 +245,38 @@ def modStudent():
         else:
             elseval(action)
 
-def filterList(filters=set()):
+def selStudent(course, select=True):
+    indexList = list(_vars.courses[course])
+    while True:
+        print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
+        for i,x in enumerate(indexList):
+            mPrint(f"[{i+1}].", f"{_vars.courses[course][x][0]} {fg.li_grey}{alt_funcs.formatAmount(x, 1)}", "index")
+        print()
+        mPrint("[0].", f"{fg.li_red}[SALIR]", True)
+        print()
+        action = xinput()
+        student = alt_funcs.getByIndex(indexList, action)
+        if student is None:
+            pass
+        elif action == "0":
+            return
+        elif student in indexList:
+            if not select:
+                return student
+            _vars.selected[1] = student
+            return
+        else:
+            elseval(student)
+
+def filterList():
     dict_ = {}
     for course, students in _vars.courses.items():
         dict_.update({student:course for student in students})
     dict_ = {k:v for k, v in sorted(dict_.items(), key=lambda data: _vars.courses[data[1]][data[0]][0])}
-    if len(filters):
+    if len(_vars.filters):
         turns = []
         courses = [] 
-        for i in filters:
+        for i in _vars.filters:
             if i in _vars.codeList["turnList"]: turns.append(i)
             elif i in _vars.courses: courses.append(i)
         if len(turns):
@@ -281,8 +285,8 @@ def filterList(filters=set()):
             dict_ = {k:c for k, c in dict_.items() if c in courses}
     return dict_
 
-def searchStudent(type_, filters=set()):
-    dict_, search = filterList(filters), None
+def searchStudent(type_):
+    search, dict_ = None, filterList()
     while True:
         if search is None:
             if type_ == "name":
@@ -298,9 +302,11 @@ def searchStudent(type_, filters=set()):
                     elseval(name)
             if type_ == "dni":
                 print("Introducir DNI:\n")
-                dni = intInput(True)
+                dni = intInput(True, True)
                 if dni == 0:
                     return
+                elif dni == "":
+                    print("Puedes salir de este menu introduciendo '0'\n")
                 elif dni is not None and dni > 0:
                     search = dni
                 else: elseval(dni)
@@ -314,13 +320,14 @@ def searchStudent(type_, filters=set()):
                 warn("No se encontraron resultados.\n")
             print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
             for i, (student, course) in enumerate(indexDict.items()):
-                mPrint(f"[{i+1}].", f"{_vars.courses[course][student][0]} {fg.li_grey}{alt_funcs.formatAmount(student, 1)}")
-            print()
+                mPrint(f"[{i+1}].", f"{_vars.courses[course][student][0]} {fg.li_grey}{alt_funcs.formatAmount(student, 1)}", "index")
+            if len(indexDict):
+                print()
             mPrint("[1].", f"{fg(230,180,98)}Cambiar", True)
             print()
             mPrint("[0].", f"{fg.li_red}[SALIR]", True)
             print()
-            action = xinput(False).replace('.','_')
+            action = xinput()
             student = alt_funcs.getByIndex(list(indexDict), action)
             if student is None:
                 pass
@@ -329,10 +336,7 @@ def searchStudent(type_, filters=set()):
             elif action == "1":
                 search = None
             elif student in indexDict:
-                _vars.selected[1] = student
-                return
-            elif alt_funcs.isWhole(action) and int(float(action)) in indexDict:
-                _vars.selected[1] = int(float(action))
-                return
+                _vars.selected = [indexDict[student], student]
+                modStudent()
             else:
                 elseval(action)

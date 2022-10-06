@@ -29,20 +29,20 @@ def title(text=None):
         sys.stdout.flush()
         os.system("")
 
-def setup():
-    funcs.clear(False)  # Clear any ansi escape characters.
-    alt_funcs.resetVars() # Reset data vars.
-    funcs.loadConfig() # Load config and do setup.
-
-def start():
-    setup()
+def program():
     while _vars.keepAlive:
         menus.changeMenu("main") # Start menu.
 
 def main():
+    funcs.clear(False)  # Clear any ansi escape characters.
     lx = funcs.lxTerm()
     try:
-        start()
+        alt_funcs.resetVars() # Reset data vars.
+        funcs.loadConfig() # Load config and do setup.
+        funcs.IntLogger()
+        if not _vars.options["menuLogo"]:
+            alt_funcs.logo()
+        program()
         if not alt_funcs.isNew():
             while True:
                 print(f'{fg(240,190,25)}Do you want to save your current data?')
@@ -63,7 +63,7 @@ def main():
         else:
             print(f"{fg.li_red}Press any key to exit the program.{fg.rs}")
             lx.getch(True)
-            #print()
+            print()
     except Exception:
         print(f"{fg.rs}\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
         print(f"{fg.li_red} --- [WARNING] Something awful happened! ---")
@@ -71,13 +71,18 @@ def main():
         # Will print this message followed by traceback.
         print(f"{fg.red}{traceback.format_exc()}", end='')
         print(f"{fg.rs}____________________________________________________________\n")
+        if alt_funcs.isNew():
+            print(f"{fg.red}Current game data is the same as default, saving aborted.\n{fg.rs}")
+        else:
+            save = funcs.genFile("courses/crash", "recovery", ".wsa", sep=True, maxFiles=8)
+            funcs.saveData(save, "courses/crash/")
         # Will dump a crash report
-        #log = funcs.genFile("logs/crash", "report", ".txt", day=True)
-        #with open(f"logs/crash/{log}.txt", 'w', encoding="utf-8") as f:
-        #    f.write("\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n")
-        #    f.write("--- [WARNING] Something awful happened! ---\n")
-        #    f.write(traceback.format_exc())
-        #    f.write("____________________________________________________________\n")
+        log = funcs.genFile("logs/crash", "report", ".txt", day=True)
+        with open(f"logs/crash/{log}.txt", 'w', encoding="utf-8") as f:
+            f.write("\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n")
+            f.write("--- [WARNING] Something awful happened! ---\n")
+            f.write(traceback.format_exc())
+            f.write("____________________________________________________________\n")
         # Prevent the console window from closing.
         print(f"{fg.li_red}Press any key to exit the program.{fg.rs}")
         lx.getch(True)
@@ -85,7 +90,6 @@ def main():
         raise
     try:
         funcs.saveConfig()
-        funcs.saveData()
     except Exception: pass
 
 
