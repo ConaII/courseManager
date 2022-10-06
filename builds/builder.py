@@ -1,7 +1,10 @@
 import os, shutil, subprocess
 from sty import *
 from utils.funcs import *
-import config
+try:
+    import config
+except ModuleNotFoundError:
+    from utils import config
 
 def title():
     title = f"pyBuilder v2.1"
@@ -20,27 +23,32 @@ def title():
         sys.stdout.flush()
         os.system("")
 
+def setup():
+    clear()
+    if config.modules["32Bits"]:
+        try:
+            subprocess.call(config.pyPaths["Ins32"], creationflags=subprocess.CREATE_NO_WINDOW)
+        except FileNotFoundError:
+            warn("[WARN] Pyinstaller (x32) wasn't found:")
+            config.modules["32Bits"] = False
+    if config.modules["64Bits"]:
+        try:
+            subprocess.call(config.pyPaths["Ins64"], creationflags=subprocess.CREATE_NO_WINDOW)
+        except FileNotFoundError:
+            warn("[WARN] Pyinstaller (x64) wasn't found: ")
+            config.modules["64Bits"] = False
+
 def cReload():
     import importlib
     importlib.reload(config)
     main()
 
 def main():
-    clear()
-    if config.modules["32Bits"]:
-        if not os.path.isfile(f'{config.pyPaths["Ins32"]}'):
-            warn("[WARN] Pyinstaller (x32) wasn't found:")
-            log(f'  "{config.pyPaths["Py32"]}" -m pip install pyinstaller\n')
-            config.modules["32Bits"] = False
-    if config.modules["64Bits"]:
-        if not os.path.isfile(f'{config.pyPaths["Ins64"]}'):
-            warn("[WARN] Pyinstaller (x64) wasn't found: ")
-            log(f'  "{config.pyPaths["Py64"]}" -m pip install pyinstaller\n')
-            config.modules["64Bits"] = False
+    setup()
     while True:
-        print(f'{fg(160,85,212)}Version: {config.OPCIONES["version"]}')
+        print(f'{fg(160,85,212)}Version: {config.options["version"]}')
         print()
-        print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----{fg.rs}")
+        print(f"{fg.magenta}-----<< {fg(240,210,40)}OPTIONS {fg.magenta}>>-----{fg.rs}")
         mPrint(f"[1].", f"{fg(93)}Obfuscate Code")
         mPrint("[2].", f"{fg(27)}EXECompiler")
         mPrint("[3].", f"{fg(11)}EXESigner")
@@ -97,18 +105,32 @@ def obfuscate():
             if file == "__init__.py":
                 shutil.copy2(f"{k}/{file}", f"obfuscated/{v}")
                 continue
-            elif False:
+            elif file in {"Master.py","_vars.py"}:
                 with open(f"{k}/{file}", 'r') as f:
                     data = f.read()
-                defaults = {}
-                for ks, vs in defaults.items():
-                    data = data.replace(f"{ks} {not vs}", f"{ks} {vs}")
+                if file == "Master.py":
+                    data.replace('if True and "coursesManager\\test" not in os.getcwd():', 'if False:')
+                else:
+                    defaults = {
+                        "devMode =": False,
+                        "godMode =": False,
+                        "passThrough =": False,
+                        '"debugMode":': False,
+                        '"allowDev":': False,
+                        '"allowMP":': False,
+                        '"saveCfg":': True,
+                        '"loadCfg":': True,
+                    }
+                    for ks, vs in defaults.items():
+                        data = data.replace(f"{ks} {not vs}", f"{ks} {vs}")
                 with open(f"utils/{file}", 'w') as f:
                     f.write(data)
                 path = f"utils/{file}"
-            cmd = ['python.exe', config.pyPaths["hyperion"], f'--file="{path}"', f'--destiny="obfuscated/{v}"', '--rename=False', f'-sr={not config.hyperion["RenameVars"]}', f'-sc={not config.hyperion["ProtectChunks"]}', f'-auto={config.hyperion["automatic"]}', '-logo=False']
+            cmd = ['py', config.pyPaths["hyperion"], f'--file="{path}"', f'--destiny="obfuscated/{v}"', '--rename=False', f'-sr={not config.hyperion["RenameVars"]}', f'-sc={not config.hyperion["ProtectChunks"]}', f'-auto={config.hyperion["automatic"]}', '-logo=False']
             subprocess.run(cmd)
             print(fg.rs, end='')
+    if os.path.isfile("utils/Master.py"):
+        os.remove("utils/Master.py")
     if os.path.isfile("utils/_vars.py"):
         os.remove("utils/_vars.py")
     if config.hyperion["doTesting"]:
@@ -118,19 +140,23 @@ def obfuscate():
             if child.returncode == 1:
                 red("Failed to execute Master.py, retrying...\n")
                 obfuscate()
+            else:
+                green("Test completed successfully...\n")
         except Exception as e:
             warn(f"{e}\n")
     title()
 
 
 def build(x64=False):
-    fullname = f'{config.OPCIONES["name"]} v{config.OPCIONES["version"]}'
+    fullname = f'{config.options["name"]} v{config.options["version"]}'
     if x64:
         fullname += "_x64"
     product = f'{config.pyIns["output"]}/{fullname}'
     code = []
+    if config.options["noConfirm"]:
+        code.append("--noConfirm")
     if config.modules["OneFile"]:
-        code.append("--OneFile")
+        code.append("--oneFile")
     for i in config.pyIns["file-imports"] + config.pyIns["hidden-imports"]:
         code.append(f"--hidden-import={i}")
     code.extend(['--clean', f'--icon={config.pyIns["icon"]}', f'--workpath={config.pyIns["temp"]}', f'--distpath={config.pyIns["output"]}', f'--paths={config.pyIns["imports"]}', *config.pyIns["data"]])
@@ -141,15 +167,15 @@ def build(x64=False):
         print("╚==============================╝")
         print(fg.cyan)
         if x64:
-            subprocess.run([f'{config.pyPaths["Ins64"]}', f'--name={fullname}', *code, config.pyIns["script"]])
+            subprocess.run([config.pyPaths["Ins64"], f'--name={fullname}', *code, config.pyIns["script"]])
         else:
-            subprocess.run([f'{config.pyPaths["Ins32"]}', f'--name={fullname}', *code, config.pyIns["script"]])
+            subprocess.run([config.pyPaths["Ins32"], f'--name={fullname}', *code, config.pyIns["script"]])
         if config.modules["OneLib"] and not config.modules["OneFile"]:
             if os.path.isfile(f'{product}/{fullname}.exe'):
-                os.rename(f'{product}/{fullname}.exe', f'{product}/{config.OPCIONES["name"]}.exe')
+                os.rename(f'{product}/{fullname}.exe', f'{product}/{config.options["name"]}.exe')
             if not os.path.isdir(f'{product}/{config.LIB["libDir"]}'):
                 os.mkdir(f'{product}/{config.LIB["libDir"]}')
-            files = [f.name for f in os.scandir(product) if f.name.endswith((".pyd",".zip",".dll")) or f.name == f'{config.OPCIONES["name"]}.exe' or f.is_dir() and f.name != config.LIB["libDir"]]
+            files = [f.name for f in os.scandir(product) if f.name.endswith((".pyd",".zip",".dll")) or f.name == f'{config.options["name"]}.exe' or f.is_dir() and f.name != config.LIB["libDir"]]
             for i in files:
                 if i.endswith("-info"):
                     shutil.rmtree(f'{product}/{i}')
@@ -158,11 +184,31 @@ def build(x64=False):
             if os.path.isfile(f'utils/wrapper/{config.LIB["Launcher"]}.exe'):
                 shutil.copy(f'utils/wrapper/{config.LIB["Launcher"]}.exe', product)
         print(fg.rs)
-        if config.OPCIONES["CleanRoom"]:
+        if config.options["CleanRoom"]:
             if os.path.isfile(f"{fullname}.spec"):
                 os.remove(f"{fullname}.spec")
             if os.path.isdir(config.pyIns["temp"]):
                 shutil.rmtree(config.pyIns["temp"])
+        if config.hyperion["doTesting"]:
+            exe = None
+            if os.path.isfile(f"{product}/{fullname}.exe"):
+                exe = f"{product}/{fullname}.exe"
+            elif os.path.isfile(f'{product}/{config.LIB["Launcher"]}.exe'):
+                exe = f'{product}/{config.LIB["Launcher"]}.exe'
+            if exe is None:
+                warn("Couldn't find executable to test")
+            else:
+                try:
+                    child = subprocess.Popen(exe, cwd=product, creationflags=subprocess.CREATE_NEW_CONSOLE)
+                    child.communicate()[0]
+                    if child.returncode == 1:
+                        red("Failed to execute Program, retrying...\n")
+                        obfuscate()
+                    else:
+                        green("Test completed successfully...\n")
+                except Exception as e:
+                    warn(f"{e}\n")
+        title()
     except Exception as e:
         warn(f"{e}\n")
 
@@ -173,16 +219,16 @@ def signer(x64=False):
         print("Example: Windows App Certification Kit x64-x86_en-us.msi, which installs the executable to C:/Program Files (x86)/Windows Kits/10/App Certification Kit/signtool.exe\n")
         return
     else:
-        fullname = f'{config.OPCIONES["name"]} v{config.OPCIONES["version"]}'
+        fullname = f'{config.options["name"]} v{config.options["version"]}'
         if x64:
             fullname += "_x64"
         cmd = [config.pyPaths["signer"], 'sign', '/fd', 'SHA256', '/f', '../storage/private/woodcert_private.pfx', '/p', 'wood_enable_CERTPAPU23958']
         dirs = [
             '.exe',
-            f'/{config.OPCIONES["name"]}.exe',
+            f'/{config.options["name"]}.exe',
             f'/{config.LIB["Launcher"]}.exe',
             f'/{fullname}.exe',
-            f'/{config.LIB["libDir"]}/{config.OPCIONES["name"]}.exe',
+            f'/{config.LIB["libDir"]}/{config.options["name"]}.exe',
         ]
     try:
         print(fg(11), end='')
@@ -200,7 +246,7 @@ def signer(x64=False):
 def rar(x64=False):
     if not os.path.isdir("dist"):
         os.mkdir("dist")
-    fullname = f'{config.OPCIONES["name"]} v{config.OPCIONES["version"]}'
+    fullname = f'{config.options["name"]} v{config.options["version"]}'
     excluded = list(f"-x{i}" for i in config.rarFiles["exclude"])
     if x64:
         fullname += "_x64"

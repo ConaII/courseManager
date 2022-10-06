@@ -1,11 +1,13 @@
 options = {
     "name": "Courses",
     "version": "2.1-rc",
-    "CleanRoom": False,
+    "CleanRoom": True,
+    "testProduct": False,
+    "noConfirm": False
 }
 
 LIB = {
-    "Launcher": "courseManager",
+    "Launcher": "CoursesManager",
     "libDir": "libraries",
     "enabled": True
 }
@@ -47,17 +49,17 @@ rarFiles = {
     "RAR": True,
     "exclude": [
         #"utils/data/certificate", Windows only
-        "*/docs",
-        "*/lang",
+        "*\docs",
+        "*\lang",
         "*.py",
         "*.pyc",
         "*.pyw",
     ],
     "include": [
         "utils/data/*",
-        #"../storage/docs/changelog.txt",
-        #"../storage/docs/!!! READ ME VERY IMPORTANT !!!.txt",
-        #"../src/resources",
+        "../storage/docs/changelog.txt",
+        "../storage/docs/!!! READ ME VERY IMPORTANT !!!.txt",
+        "../src/resources",
     ],
     "empty": [
         "mods",
@@ -72,25 +74,26 @@ pyIns = {
     "imports": "./obfuscated",
     "output": "./product",
     "temp": "./utils/temp",
-    "icon": "../storage/icons/favicon.ico",
+    "icon": "../storage/icons/wood.ico",
     "file-imports": [
-        "xProgram",
-        "core._vars",
-        "core.menus",
-        "core.menu_funcs",
+        "xGame",
+        "game._vars",
+        "game.menus",
+        "game.menu_funcs",
         "utils.funcs",
         "utils.alt_funcs",
+        "utils.game_funcs",
+        "utils.thread_funcs"
     ],
     "hidden-imports": [
         "certifi",
-        "cffi",
+        #"cffi",
         "charset_normalizer",
         "cryptography",
         "cryptography.fernet",
         "idna",
         "inflect",
         "keyboard",
-        "pycparser",
         "pydantic",
         "pygame",
         "pypresence",

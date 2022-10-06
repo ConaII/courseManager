@@ -1,10 +1,11 @@
 import copy
+from sty import fg
 
-__VERSION__ = '1.0-rc'
+__VERSION__ = '2.0-beta'
 __COLORS__ = True
 
 def codeInit():
-    global opticalsRT
+    global opticalsRT, codeList
     global keepAlive, restart, exitMenu, exitSubMenu, menu, menuFunc
     keepAlive, restart = True, False
     exitMenu, exitSubMenu = None, None
@@ -13,6 +14,9 @@ def codeInit():
         "saveCfg": True,
         "loadCfg": True,
         "allowDev": True,
+    }
+    codeList = {
+        "turnList": ["Mañana", "Tarde", "Noche"]
     }
     configInit()
 
@@ -26,7 +30,7 @@ def configInit():
         "OPCIONES": {
             "menuLogo": True,
             "debugMode": False,
-            "clearMode": True,
+            "clearMode": False,
         },
         "other": {
             "cmdColors": True,
@@ -42,18 +46,30 @@ def varsInit():
     selected = [None, None]
     defaultVars = {
         "courses": {
-            "1º1": {},
-            "2º2": {},
-            "3º3": {},
-            "4º4": {},
+            "1º2": {
+                88_239_597: ["Barca Doe"],
+                88_239_595: ["Beta Dami"],
+                33_282_395: ["Randal Monroe"],
+            },
+            "2º1": {
+                88_239_596: ["Alaba Doe"],
+                33_282_394: ["Delta Mar"],
+            },
+            "3º2": {
+                88_239_594: ["Carson Tano"],
+                33_282_393: ["Jonna Cena"],
+            },
+            "4º14": {
+                88_239_593: ["John Doe"],
+                33_282_392: ["Janne Doe"],
+            }
         },
         "turns": {
-            "1º1": "Tarde",
-            "2º2": "Tarde",
-            "3º3": "Tarde",
-            "4º4": "Mañana",
+            "1º2": "Tarde",
+            "2º1": "Mañana",
+            "3º2": "Tarde",
+            "4º14": "Noche",
         },
-        "turnList": ["Mañana","Tarde","Noche"],
         "format": 1.0,
         "version": __VERSION__
     }

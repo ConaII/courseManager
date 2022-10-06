@@ -160,6 +160,8 @@ def intInput(replace=False):
             action = action.replace('.','_')
         return int(float(action))
     except (ValueError, OverflowError):
+        if action == "":
+            print("Puedes salir de este menu introduciendo '0'\n")
         warn("Debes introducir un valor numerico.\n")
 
 def xinput(allowCMD=True, sep=">>>", color=fg(0, 148, 255), color2=rs.all):

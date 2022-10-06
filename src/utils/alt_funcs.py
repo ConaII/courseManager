@@ -1,5 +1,8 @@
-from core import _vars
 import re
+# Installed
+from sty import bg, ef, fg, rs
+# Program
+from core import _vars
 
 def isNew(where=None):
     if where is None:
@@ -42,6 +45,20 @@ def getByIndex(list_, string, negative=True):
                 return string
             return list_[index]
     return string
+
+def filterCourses(turns):
+    return [x for x in _vars.courses if _vars.turns[x] in turns]
+
+def formatAmount(amount, sep=None):
+    amount = int(amount)
+    if sep is None:
+        sep = _vars.formats["sep"]
+    style = {
+        0: amount,
+        1: f"{amount:,}".replace(",","|").replace(".",",").replace("|","."),
+        2: f"{amount:,}"
+    }
+    return style[sep]
 
 def validateDNI(dni: str) -> bool:
     REGEXP = "[0-9]{8}[A-Z]"

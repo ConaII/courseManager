@@ -1,16 +1,11 @@
 ### Wood Build ###
 builds/*.spec
-builds/utils/*
+builds/*.bat
+builds/config.py
 builds/dist
 builds/product
 builds/obfuscated
-
-!builds/utils/data
-!builds/utils/funcs.py
-!builds/utils/hyperion.py
-!builds/utils/requirements.txt
-!builds/utils/wrapper/main.c
-!builds/utils/wrapper/CoursesManager.exe
+builds/utils/temp
 
 ### Wood Files ###
 *.wsa
@@ -18,11 +13,10 @@ builds/obfuscated
 *.log
 *.key
 
-logs/*
-*/logs/crash/*
+test/*
 config.wdc
 password.key
-test/defaultVars.txt
+defaultVars.txt
 src/multiplayer/users.json
 
 # End of wood by https://github.com/ConaII/woodRewritten

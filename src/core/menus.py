@@ -1,3 +1,6 @@
+# Installed
+from sty import bg, ef, fg, rs
+# Program
 from core import _vars
 from utils import funcs, alt_funcs
 from utils.funcs import *
@@ -49,12 +52,12 @@ def menuLoop(funcMenu):
             else:
                 elseval(action)
         while funcMenu == "manageCourses" and not _vars.exitMenu:
-            if _vars.selected[0] is not None:
-                print(f"{fg(80,171,234)}Curso: {_vars.selected[0]} {fg(234,160,80)}Turno: {_vars.turns[_vars.selected[0]]}")
-                print()
+            course = _vars.selected[0]
+            if course is not None:
+                print(f"{fg(58,118,238)}Curso: {fg.li_grey}{course} {fg(114,78,220)}Turno: {fg.li_grey}{_vars.turns[course]}\n")
             print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
             mPrint("[1].", f"{fg(85,200,90)}Añadir curso", True)
-            mPrint("[2].", f"{fg(226,100,56)}Seleccionar curso", True)
+            mPrint("[2].", f"{fg(230,180,98)}Seleccionar curso", True)
             mPrint("[3].", f"{fg(152,85,211)}Modificar curso", True)
             mPrint("[4].", f"{fg(215,70,60)}Eliminar curso", True)
             print()
@@ -68,31 +71,73 @@ def menuLoop(funcMenu):
             elif action == "1":
                 xProgram.addCourse()
             elif action == "2":
-                xProgram.selCourse()
+                if not len(_vars.courses):
+                    warn("No hay ningun curso añadido.\n")
+                else:
+                    xProgram.selCourse()
             elif action == "3":
-                if _vars.selected[0] is None:
-                    xProgram.modCourse()
+                if course is None:
+                    warn("No hay un curso seleccionado.\n")
                 else: 
-                    warn("Selecciona un curso primero\n")
+                    xProgram.modCourse()
             elif action == "4":
-                xProgram.delCourse()
+                if course is None:
+                    warn("No hay un curso seleccionado.\n")
+                else: 
+                    xProgram.delCourse(course)
             elif action == "5":
-                changeMenu("search")
+                if not len(_vars.courses):
+                    warn("No hay ningun curso añadido.\n")
+                if not any(len(x) for x in _vars.courses):
+                    warn("No hay ningun alumno añadido.\n")
+                else:
+                    changeMenu("search")
             else:
                 elseval(action)
         while funcMenu == "search" and not _vars.exitMenu:
+            try:
+                if filters is not None:
+                    pass
+            except NameError:
+                filters = set()
+            if len(filters):
+                strList = ", ".join(filters)
+                print(f"Filtros: {strList}\n")
             print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
             mPrint("[1].", f"{fg(110,218,128)}Buscar DNI", True)
             mPrint("[2].", f"{fg(152,85,211)}Buscar Nombre", True)
-            mPrint("[3].", f"{fg(215,70,60)}Buscar Curso", True)
-            print()
-            mPrint("[4].", f"{fg(215,70,60)}Añadir filtro", True)
+            mPrint("[3].", f"{fg(235,173,98)}Filtrar por Curso", True)
+            mPrint("[4].", f"{fg(228,125,50)}Filtrar por Turno", True)
             print()
             mPrint("[0].", f"{fg.li_red}[SALIR]", True)
             print()
             action = xinput()
             if action == "0":
                 return
+            elif action == "1":
+                xProgram.searchStudent("dni", filters)
+            elif action == "2":
+                xProgram.searchStudent("name", filters)
+            elif action == "3":
+                course = xProgram.selCourse(select=False, filters=filters)
+                if course is not None:
+                    if course in filters:
+                        warn(f"Se elimino el curso {course} del filtro.\n")
+                        filters.remove(course)
+                    else:
+                        green(f"Se añadio el curso {course} al filtro.\n") 
+                        filters.add(course)
+            elif action == "4":
+                turn = xProgram.selTurn(filters=filters)
+                if turn is not None:
+                    if turn in filters:
+                        warn(f"Se elimino el turno {turn} del filtro.\n")
+                        filters.remove(turn)
+                    else:
+                        green(f"Se añadio el turno {turn} al filtro.\n")
+                        filters.add(turn)
+            else:
+                elseval()
         while funcMenu == "export" and not _vars.exitMenu:
             print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
             mPrint("[1].", "Export in courses directory", 1)

@@ -4,7 +4,7 @@ import os, sys, traceback
 os.environ['FOR_DISABLE_CONSOLE_CTRL_HANDLER'] = '1'
 # Installed
 from sty import bg, ef, fg, rs
-# Wood imports
+# Program
 from utils import funcs, alt_funcs
 from core import _vars, menus
 import xProgram
@@ -63,7 +63,7 @@ def main():
         else:
             print(f"{fg.li_red}Press any key to exit the program.{fg.rs}")
             lx.getch(True)
-            print()
+            #print()
     except Exception:
         print(f"{fg.rs}\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
         print(f"{fg.li_red} --- [WARNING] Something awful happened! ---")
