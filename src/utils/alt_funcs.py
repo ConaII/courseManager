@@ -17,7 +17,6 @@ def checkAnyIn(string, list_):
         if string in i:
             return True
 
-# Check if string is a whole integer.
 def isWhole(string):
     if isinstance(string, str) and string != "":
         if string.isdecimal() or string[0] in ['-','+'] and string[1:].isdecimal():
@@ -46,10 +45,10 @@ def getByIndex(list_, string, negative=True):
 
 def validateDNI(dni: str) -> bool:
     REGEXP = "[0-9]{8}[A-Z]"
-    DIGITO_CONTROL = "TRWAGMYFPDXBNJZSQVHLCKE"
-    INVALIDOS = {"00000000T", "00000001R", "99999999R"}
+    CONTROL = "TRWAGMYFPDXBNJZSQVHLCKE"
+    INVALID = {"00000000T", "00000001R", "99999999R"}
     if not dni[-1].isalpha():
-        dni += DIGITO_CONTROL[int(dni[0:8]) % 23]
-    return (dni not in INVALIDOS
+        dni += CONTROL[int(dni[0:8]) % 23]
+    return (dni not in INVALID
             and re.match(REGEXP, dni) is not None 
-            and dni[8] == DIGITO_CONTROL[int(dni[0:8]) % 23])
+            and dni[8] == CONTROL[int(dni[0:8]) % 23])

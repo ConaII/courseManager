@@ -1,2 +1,2 @@
-py -3.8 builder.py
+py builder.py
 exit

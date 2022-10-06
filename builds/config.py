@@ -1,5 +1,5 @@
 OPCIONES = {
-    "name": "courses",
+    "name": "Courses",
     "version": "1.0-rc",
     "CleanRoom": True,
 }
@@ -19,8 +19,8 @@ modules = {
 
 #https://github.com/adang1345/PythonWindows/blob/master/3.8.13
 pyPaths = {
-    "Py32": "C:/Program Files (x86)/Python38-32/python.exe",
-    "Ins32": "C:/Program Files (x86)/Python38-32/Scripts/pyinstaller.exe",
+    "Py32": "C:/Users/alumno/AppData/Local/Programs/Python/Python310",
+    "Ins32": "C:/Users/alumno/AppData/Local/Programs/Python/Python310/Scripts/pyinstaller.exe",
     "Py64": "C:/Program Files/Python38/python.exe",
     "Ins64": "C:/Program Files/Python38/Scripts/pyinstaller.exe",
     "signer": "C:/Program Files (x86)/Windows Kits/10/App Certification Kit/signtool.exe",
@@ -49,8 +49,8 @@ rarFiles = {
     "RAR": True,
     "exclude": [
         #"utils/data/certificate", Windows only
-        "*\docs",
-        "*\lang",
+        "*/docs",
+        "*/lang",
         "*.py",
         "*.pyc",
         "*.pyw",
@@ -73,15 +73,14 @@ pyIns = {
     "imports": "./obfuscated",
     "output": "./product",
     "temp": "./utils/temp",
-    "icon": "../storage/icons/wood.ico",
+    "icon": "../storage/icons/favicon.ico",
     "file-imports": [
         "xProgram",
-        "game._vars",
-        "game.menus",
-        "game.menu_funcs",
+        "core._vars",
+        "core.menus",
+        "core.menu_funcs",
         "utils.funcs",
         "utils.alt_funcs",
-        "utils.game_funcs",
     ],
     "hidden-imports": [
         #"windows-curses",
@@ -90,22 +89,17 @@ pyIns = {
         "certifi",
         "cffi",
         "charset_normalizer",
-        "cryptography",
-        "cryptography.fernet",
         "idna",
         "inflect",
-        "keyboard",
         "pycparser",
-        "pygame",
-        "pypresence",
         "PySimpleGUI",
         "pytz",
         "requests",
         "sty",
-        "toml",
         "urllib3",
         "curses",
         "zope.interface",
+        "platform",
     ],
     "data": []
 }

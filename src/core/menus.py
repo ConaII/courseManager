@@ -19,18 +19,18 @@ def menuLoop(funcMenu):
             return
         while funcMenu == "main" and not _vars.exitMenu:
             print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
-            mPrint("[1].", "Manage Courses", True)
-            mPrint("[2].", f"{fg(26,216,175)}Import File", True)
-            mPrint("[3].", f"{fg(216,84,22)}Export File", True)
-            mPrint("[4].", f"{fg(30,130,240)}OPCIONES", True)
+            mPrint("[1].", f"{fg(152,85,211)}Gestionar cursos", True)
+            mPrint("[2].", f"{fg(85,200,168)}Importar datos", True)
+            mPrint("[3].", f"{fg(216,84,22)}Exportar datos", True)
+            mPrint("[4].", f"{fg(30,130,240)}Opciones", True)
             print()
             mPrint("[0].", f"{fg.li_red}[CERRAR]", True)
             print() 
             action = xinput()
             if action == "0":
                 red("Estas seguro? Esto cerrara el programa!")
-                mPrint("1.", "Confirmar", True)
-                mPrint("2.", "Volver", True)
+                mPrint("[1].", "Confirmar", True)
+                mPrint("[2].", "Volver", True)
                 print()
                 action = xinput(False)
                 if action == "1":
@@ -39,7 +39,7 @@ def menuLoop(funcMenu):
                 elif action != "2":
                     elseval(action)
             elif action == "1":
-                changeMenu("manage")
+                changeMenu("manageCourses")
             elif action == "2":
                 warn("Aún no implementado\n")
             elif action == "3":
@@ -48,26 +48,17 @@ def menuLoop(funcMenu):
                 warn("Aún no implementado\n")
             else:
                 elseval(action)
-        while funcMenu == "OPCIONES" and not _vars.exitMenu:
+        while funcMenu == "manageCourses" and not _vars.exitMenu:
+            if _vars.selected[0] is not None:
+                print(f"{fg(80,171,234)}Curso: {_vars.selected[0]} {fg(234,160,80)}Turno: {_vars.turns[_vars.selected[0]]}")
+                print()
             print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
-            mPrint("[1].", f"{fg(218,145,30)}Test", True)
-            mPrint("[2].", f"{fg(78,226,178)}Word", True)
-            mPrint("[3].", f"{fg(80,118,222)}Moment", True)
-            mPrint("[4].", f"{fg(116,90,202)}Settings", True)
-            mPrint("[5].", f"{fg(110,218,128)}Testing", True)
+            mPrint("[1].", f"{fg(85,200,90)}Añadir curso", True)
+            mPrint("[2].", f"{fg(226,100,56)}Seleccionar curso", True)
+            mPrint("[3].", f"{fg(152,85,211)}Modificar curso", True)
+            mPrint("[4].", f"{fg(215,70,60)}Eliminar curso", True)
             print()
-            mPrint("[0].", f"{fg.li_red}[SALIR]", True)
-            print()
-            action = xinput()
-            if action == "0":
-                return
-        while funcMenu == "manage" and not _vars.exitMenu:
-            print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
-            mPrint("[1].", f"{fg(110,218,128)}Añadir curso", True)
-            mPrint("[2].", f"{fg(152,85,211)}Gestionar curso", True)
-            mPrint("[3].", f"{fg(215,70,60)}Eliminar curso", True)
-            print()
-            mPrint("[4].", f"{fg.li_blue}Buscador", True)
+            mPrint("[5].", f"{fg.li_blue}Buscador", True)
             print()
             mPrint("[0].", f"{fg.li_red}[SALIR]", True)
             print()
@@ -77,10 +68,15 @@ def menuLoop(funcMenu):
             elif action == "1":
                 xProgram.addCourse()
             elif action == "2":
-                xProgram.manageCourse()
+                xProgram.selCourse()
             elif action == "3":
-                xProgram.delCourse()
+                if _vars.selected[0] is None:
+                    xProgram.modCourse()
+                else: 
+                    warn("Selecciona un curso primero\n")
             elif action == "4":
+                xProgram.delCourse()
+            elif action == "5":
                 changeMenu("search")
             else:
                 elseval(action)
@@ -116,6 +112,19 @@ def menuLoop(funcMenu):
                 favDirs("save")
         while funcMenu == "import" and not _vars.exitMenu:
             pass
+        while funcMenu == "options" and not _vars.exitMenu:
+            print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
+            mPrint("[1].", f"{fg(218,145,30)}Test", True)
+            mPrint("[2].", f"{fg(78,226,178)}Word", True)
+            mPrint("[3].", f"{fg(80,118,222)}Moment", True)
+            mPrint("[4].", f"{fg(116,90,202)}Settings", True)
+            mPrint("[5].", f"{fg(110,218,128)}Testing", True)
+            print()
+            mPrint("[0].", f"{fg.li_red}[SALIR]", True)
+            print()
+            action = xinput()
+            if action == "0":
+                return
 
 def exportFile():
     pass

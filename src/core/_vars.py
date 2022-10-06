@@ -1,6 +1,6 @@
 import copy
 
-__VERSION__ = '1.0-beta'
+__VERSION__ = '1.0-rc'
 __COLORS__ = True
 
 def codeInit():
@@ -26,7 +26,7 @@ def configInit():
         "OPCIONES": {
             "menuLogo": True,
             "debugMode": False,
-            "clearMode": False,
+            "clearMode": True,
         },
         "other": {
             "cmdColors": True,

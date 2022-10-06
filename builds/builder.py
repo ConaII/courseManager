@@ -137,7 +137,7 @@ def build(x64=False):
     try:
         print(fg.li_blue, end='')
         print("╔==============================╗")
-        print("│      Building %sBits...      │" % "64" if x64 else "32")
+        print("│      Building %sBits...      │" % ("64" if x64 else "32"))
         print("╚==============================╝")
         print(fg.cyan)
         if x64:

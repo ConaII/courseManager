@@ -72,12 +72,12 @@ def main():
         print(f"{fg.red}{traceback.format_exc()}", end='')
         print(f"{fg.rs}____________________________________________________________\n")
         # Will dump a crash report
-#log = funcs.genFile("logs/crash", "report", ".txt", day=True)
-#with open(f"logs/crash/{log}.txt", 'w', encoding="utf-8") as f:
-#    f.write("\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n")
-#    f.write("--- [WARNING] Something awful happened! ---\n")
-#    f.write(traceback.format_exc())
-#    f.write("____________________________________________________________\n")
+        #log = funcs.genFile("logs/crash", "report", ".txt", day=True)
+        #with open(f"logs/crash/{log}.txt", 'w', encoding="utf-8") as f:
+        #    f.write("\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n")
+        #    f.write("--- [WARNING] Something awful happened! ---\n")
+        #    f.write(traceback.format_exc())
+        #    f.write("____________________________________________________________\n")
         # Prevent the console window from closing.
         print(f"{fg.li_red}Press any key to exit the program.{fg.rs}")
         lx.getch(True)

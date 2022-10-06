@@ -10,7 +10,7 @@ builds/obfuscated
 !builds/utils/hyperion.py
 !builds/utils/requirements.txt
 !builds/utils/wrapper/main.c
-!builds/utils/wrapper/WoodLauncher.exe
+!builds/utils/wrapper/CoursesManager.exe
 
 ### Wood Files ###
 *.wsa
