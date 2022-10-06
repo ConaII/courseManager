@@ -1,6 +1,6 @@
 options = {
     "name": "Courses",
-    "version": "2.1-rc",
+    "version": "2.22",
     "CleanRoom": False,
 }
 

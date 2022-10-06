@@ -1,0 +1,1 @@
+wt new-tab --title "Command Prompt" .\run.bat

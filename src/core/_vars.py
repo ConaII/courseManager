@@ -1,7 +1,7 @@
 import copy
 from sty import fg
 
-__VERSION__ = '2.0-rc'
+__VERSION__ = '2.1-beta'
 __COLORS__ = True
 
 def codeInit():
@@ -20,7 +20,7 @@ def codeInit():
     }
     codeList = {
         "turnList": ["Mañana", "Tarde", "Noche"],
-        "menuList": ["main","options","settings","save","load","manage","search","modCourse","modStudent","nowhere"]
+        "menuList": ["main","options","settings","manage","search","modCourse","modStudent","nowhere"]
     }
     configInit()
 
@@ -51,29 +51,8 @@ def varsInit():
     filters = set()
     defaultVars = {
         "courses": {
-            "1º2": {
-                88_239_597: ["Barca Doe"],
-                88_239_595: ["Beta Dami"],
-                33_282_395: ["Randal Monroe"],
-            },
-            "2º1": {
-                88_239_596: ["Alaba Doe"],
-                33_282_394: ["Delta Mar"],
-            },
-            "3º5": {
-                88_239_594: ["Carson Tano"],
-                33_282_393: ["Jonna Cena"],
-            },
-            "4º14": {
-                88_239_593: ["John Doe"],
-                33_282_392: ["Janne Doe"],
-            }
         },
         "turns": {
-            "1º2": "Mañana",
-            "2º1": "Tarde",
-            "3º5": "Noche",
-            "4º14": "Noche",
         },
         "format": 1.0,
         "version": __VERSION__

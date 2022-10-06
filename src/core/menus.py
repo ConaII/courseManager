@@ -406,25 +406,25 @@ def fileManager(mode, path="courses/", file=None):
     ext = ".wsa"
     if not path.endswith('/'):
         path += '/'
-    #_vars.exitSubMenu = False
-    #while not _vars.exitSubMenu:
-    #    print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
-    #    mPrint("[1].", "Utilize custom file format", True)
-    #    mPrint("[2].", "Utilize excel file format", True)
-    #    print()
-    #    mPrint("[0].", f"{fg.li_red}[SALIR]", True)
-    #    print()
-    #    action = xinput()
-    #    if action == "0":
-    #        return
-    #    elif action == "1":
-    #        ext = ".wsa"
-    #        break
-    #    elif action == "2":
-    #        ext = ".xls"
-    #        break
-    #    else:
-    #        elseval(action)
+    _vars.exitSubMenu = False
+    while not _vars.exitSubMenu:
+        print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
+        mPrint("[1].", "Utilize custom file format", True)
+        mPrint("[2].", "Utilize excel file format", True)
+        print()
+        mPrint("[0].", f"{fg.li_red}[SALIR]", True)
+        print()
+        action = xinput()
+        if action == "0":
+            return
+        elif action == "1":
+            ext = ".wsa"
+            break
+        elif action == "2":
+            ext = ".xlsx"
+            break
+        else:
+            elseval(action)
     while not _vars.exitSubMenu:
         if not os.path.isdir(path):
             os.makedirs(path, exist_ok=True)
@@ -471,16 +471,16 @@ def fileManager(mode, path="courses/", file=None):
                         print()
                         action = xinput(False)
                         if action == "1":
-                            if funcs.saveData(file, path=path):
+                            if funcs.saveData(file, path=path, ext=ext):
                                 return
                         if action in {"1","2"}:
                             break
                         else:
                             elseval(action)
-                elif funcs.saveData(file, path=path):
+                elif funcs.saveData(file, path=path, ext=ext):
                     break
             elif mode == "load":           
-                if funcs.loadData(file, path=path):
+                if funcs.loadData(file, path=path, ext=ext):
                     break
         else:
             elseval(file)

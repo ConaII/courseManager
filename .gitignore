@@ -13,7 +13,11 @@ builds/utils/temp
 *.log
 *.key
 
-test/*
+!et11.wsa
+!et11.xlsx
+
+test/logs/*
+
 config.wdc
 password.key
 defaultVars.txt

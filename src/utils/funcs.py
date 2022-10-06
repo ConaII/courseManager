@@ -6,7 +6,7 @@ else:
     from select import select
 # Installed
 from sty import bg, ef, fg, rs
-import pickle
+import pickle, openpyxl, xlsxwriter
 # Program
 from core import _vars
 
@@ -106,12 +106,38 @@ def genFile(path, name, ext, day=False, sep=False, maxFiles=0):
         os.remove(f"{path}/{fileList[0]}")
     return file
 
-def import1():
-    pass
+def exportVal(workbook):
+    data = []
+    for course, students in _vars.courses.items():
+        data.extend([[course, _vars.turns[course], dni, *students[dni]] for dni in students])
+    ef = workbook.add_format({'border':2, 'align':'left'})
+    efb = workbook.add_format({'border':2, 'align':'left', 'bold':True})
+    worksheet = workbook.add_worksheet('students')
+    worksheet.set_column('D:D', 30)
+    worksheet.set_column('C:C', 10)
+    worksheet.write_row(0, 0, ["Curso", "Turno", "DNI", "Nombres"], efb)
+    for row_num, data in enumerate(data):
+        worksheet.write_row(row_num+1, 0, data, ef)
 
-def export1():
-    pass
-
+def importVal(file):
+    from utils import alt_funcs
+    students = []
+    try:
+        workbook = openpyxl.load_workbook(file)
+        for row in workbook.worksheets[0].rows:
+            students.append([cell.value for cell in row])
+        if students == []:
+            return False
+        alt_funcs.resetVars()
+        for i in range(1, len(students)):
+            course, turn, dni, *data = students[i]
+            if course not in _vars.courses:
+                _vars.courses[course] = {}
+                _vars.turns[course] = turn
+            _vars.courses[course][dni] = data
+        return True
+    except Exception:
+        ExceptionCaught()
 
 def saveVal(data=None):
     if data is None:
@@ -161,8 +187,12 @@ def saveData(save, path=None, ext=".wsa"):
             while save.lower().endswith(ext):
                 save = save[:-4]
             saveFile = os.path.join(f'{path}{save}{ext}')
-            with open(f"{saveFile}", 'wb') as f:
-                f.write(saveVal())
+            if ext == ".wsa":
+                with open(f"{saveFile}", 'wb') as f:
+                    f.write(saveVal())
+            elif ext == ".xlsx":
+                with xlsxwriter.Workbook(saveFile) as f:
+                    exportVal(f)
             green(f"Los datos se guardaron como {rs.bold_dim+fg.magenta}\"{save}{ext}\"\n")
             return True
     except FileNotFoundError:
@@ -173,7 +203,7 @@ def saveData(save, path=None, ext=".wsa"):
         warn("Program variables were not initiated.")
     print()
 
-def loadData(save, path=None):
+def loadData(save, path=None, ext='.wsa'):
     try:
         if path is None:
             path = "courses/"
@@ -181,11 +211,17 @@ def loadData(save, path=None):
             raise PermissionError
         if not os.path.isdir(path):
             os.makedirs(path, exist_ok=True)
-        while save.lower().endswith('.wsa'):
+        while save.lower().endswith(ext):
             save = save[:-4]
-        with open(os.path.join(f'{path}{save}.wsa'), 'rb') as f:
-            if loadVal(f.read()):
-                green(f"Save file {save}.wsa loaded.\n")
+        saveFile = os.path.join(f'{path}{save}{ext}')
+        if ext == '.wsa':
+            with open(saveFile, 'rb') as f:
+                if loadVal(f.read()):
+                    green(f"Se cargo el archivo {save}{ext}.\n")
+                    return True
+        elif ext == '.xlsx':
+            if importVal(saveFile):
+                green(f"Se cargo el excel {save}{ext}\n")
                 return True
     except FileNotFoundError:
         red("That save file doesn't exist.\n")
@@ -736,21 +772,6 @@ def runCommand(cmd):
 ## Developer Commands ##
 #----------------------#
 
-        elif args[0].lower() == "/import":
-            if _vars.devMode:
-                import1()
-            elif _vars.opticalsRT["allowDev"]:
-                red("Developer mode is disabled\n")
-            else:
-                elseval()
-
-        elif args[0].lower() == "/export":
-            if _vars.devMode:
-                export1()
-            elif _vars.opticalsRT["allowDev"]:
-                red("Developer mode is disabled\n")
-            else:
-                elseval()
         elif args[0].lower() == "/sty":
             if _vars.devMode:
                 usage = True
