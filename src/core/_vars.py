@@ -1,7 +1,7 @@
 import copy
 from sty import fg
 
-__VERSION__ = '2.2-beta'
+__VERSION__ = '2.2-rc'
 __COLORS__ = True
 
 def codeInit():

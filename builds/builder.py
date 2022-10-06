@@ -119,7 +119,7 @@ def obfuscate():
                 with open(f"utils/{file}", 'w') as f:
                     f.write(data)
                 path = f"utils/{file}"
-            cmd = ['py', config.pyPaths["hyperion"], f'--file="{path}"', f'--destiny="obfuscated/{v}"', '--rename=False', f'-sr={not config.hyperion["RenameVars"]}', f'-sc={not config.hyperion["ProtectChunks"]}', f'-auto={config.hyperion["automatic"]}', '-logo=False']
+            cmd = [*config.pyPaths["python"].split(), config.pyPaths["hyperion"], f'--file="{path}"', f'--destiny="obfuscated/{v}"', '--rename=False', f'-sr={not config.hyperion["RenameVars"]}', f'-sc={not config.hyperion["ProtectChunks"]}', f'-auto={config.hyperion["automatic"]}', '-logo=False']
             subprocess.run(cmd)
             print(fg.rs, end='')
     if os.path.isfile("utils/Master.py"):
@@ -128,7 +128,7 @@ def obfuscate():
         os.remove("utils/_vars.py")
     if config.hyperion["doTesting"]:
         try:
-            child = subprocess.Popen(['py', 'Master.py'], cwd="obfuscated", creationflags=subprocess.CREATE_NEW_CONSOLE)
+            child = subprocess.Popen([*config.pyPaths["python"].split(), 'Master.py'], cwd="obfuscated", creationflags=subprocess.CREATE_NEW_CONSOLE)
             child.communicate()[0]
             if child.returncode == 1:
                 red("Failed to execute Master.py, retrying...\n")

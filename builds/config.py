@@ -1,6 +1,6 @@
 options = {
     "name": "Courses",
-    "version": "2.22",
+    "version": "2.2-rc",
     "CleanRoom": True,
     "testProduct": False,
     "noConfirm": False
@@ -21,6 +21,7 @@ modules = {
 
 #https://github.com/adang1345/PythonWindows/blob/master/3.8.13
 pyPaths = {
+    "python": "py",
     "Ins32": "pyinstaller.exe",
     "Ins64": "",
     "signer": "C:/Program Files (x86)/Windows Kits/10/App Certification Kit/signtool.exe",
