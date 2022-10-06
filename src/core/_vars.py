@@ -1,7 +1,7 @@
 import copy
 from sty import fg
 
-__VERSION__ = '2.2-rc'
+__VERSION__ = '2.3-beta'
 __COLORS__ = True
 
 def codeInit():
@@ -70,6 +70,7 @@ def refreshVars():
     turns = var["turns"]
 
 def refreshCfg():
-    global config, formats, options
+    global config, formats, options, others
     formats = config["formats"]
     options = config["options"]
+    others = config["other"]

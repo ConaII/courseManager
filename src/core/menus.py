@@ -25,8 +25,8 @@ def menuLoop(funcMenu):
                 alt_funcs.logo()
             print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
             mPrint("[1].", f"{fg(152,85,211)}Gestionar cursos", True)
-            mPrint("[2].", f"{fg(30,222,101)}Importar datos", True)
-            mPrint("[3].", f"{fg(224,75,35)}Exportar datos", True)
+            mPrint("[2].", f"{fg(90,220,98)}Importar datos", True)
+            mPrint("[3].", f"{fg(223,90,50)}Exportar datos", True)
             mPrint("[4].", f"{fg(30,130,240)}Opciones", True)
             print()
             mPrint("[0].", f"{fg.li_red}[CERRAR]", True)
@@ -35,7 +35,7 @@ def menuLoop(funcMenu):
             if action == "0":
                 red("Estas seguro? Esto cerrara el programa!")
                 mPrint("[1].", "Confirmar", True)
-                mPrint("[2].", "Volver", True)
+                mPrint("[2].", "Denegar", True)
                 print()
                 action = xinput(False)
                 if action == "1":
@@ -56,10 +56,12 @@ def menuLoop(funcMenu):
         while funcMenu == "options" and not _vars.exitMenu:
             toMode = [f"{fg(215,70,60)}disabled",f"{fg(60,215,40)}enabled"]
             print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
-            mPrint("[1].", f"Toggle clearMode", True)
-            mPrint("[2].", f"Toggle menuLogo", True)
-            mPrint("[3].", f"Manage Formats", True)
-            mPrint("[4].", f"Manage Config", True)
+            mPrint("[1].", f'{fg(81,205,128) if _vars.options["clearMode"] else fg(215,70,60)}Toggle clearMode', True)
+            mPrint("[2].", f'{fg(81,205,128) if _vars.options["menuLogo"] else fg(215,70,60)}Toggle menuLogo', True)
+            mPrint("[3].", f'{fg(81,205,128) if _vars.others["cmdColors"] else fg(215,70,60)}Toggle colors', True)
+            mPrint("[4].", f"{fg(203,90,220)}Manage Formats", True)
+            print()
+            mPrint("[5].", f"{fg(152,85,211)}Manage Config", True)
             print()
             mPrint("[0].", f"{fg.li_red}[SALIR]", True)
             print()
@@ -80,15 +82,21 @@ def menuLoop(funcMenu):
                 _vars.options["menuLogo"] = value
                 funcs.saveConfig()
             elif action == "3":
+                value = not _vars.other["cmdColors"]
+                print(f"You {toMode[int(value)]}{fg.rs} the cmd colors.")
+                print()
+                _vars.other["cmdColors"] = value
+                funcs.saveConfig()
+            elif action == "4":
                 _vars.exitSubMenu = False
                 while not _vars.exitSubMenu:
                     toMode = [f"{fg(215,70,60)}non-spaced",f"{fg(60,215,40)}spaced"]
-                    print(f"{fg.magenta}-----<< {fg(240,210,40)}OPTIONS {fg.magenta}>>-----")
-                    mPrint("[1].", "Toggle menu space", True)
-                    mPrint("[2].", "Toggle index space", True)
+                    print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
+                    mPrint("[1].", f'{fg(81,205,128) if _vars.formats["spaces"][0] else fg(215,70,60)}Toggle menu space', True)
+                    mPrint("[2].", f'{fg(81,205,128) if _vars.formats["spaces"][1] else fg(215,70,60)}Toggle index space', True)
                     mPrint("[3].", "Thousand separator", True)
                     print()
-                    mPrint("[0].", f"{fg.li_red}[GO BACK]", True)
+                    mPrint("[0].", f"{fg.li_red}[SALIR]", True)
                     print()
                     action = xinput()
                     if action == "0":
@@ -106,43 +114,38 @@ def menuLoop(funcMenu):
                     elif action == "3":
                         sepType = [
                             f"{fg(215,70,60)}No separator",
-                            f"{fg(240,190,25)}Dots separator",
-                            f"{fg(60,215,40)}Comma separator" 
+                            f"{fg(225,171,64)}Dots separator",
+                            f"{fg(90,205,170)}Comma separator" 
                         ]
                         _vars.exitSubMenu = False
                         while not _vars.exitSubMenu:
-                            print(f"{fg.magenta}-----<< {fg(240,210,40)}OPTIONS {fg.magenta}>>-----")
+                            print(f'Separator format: {sepType[_vars.formats["sep"]]}\n')
+                            print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
                             mPrint("[1].", sepType[0], True)
                             mPrint("[2].", sepType[1], True)
                             mPrint("[3].", sepType[2], True)
                             print()
-                            mPrint("[0].", f"{fg.li_red}[GO BACK]", True)
+                            mPrint("[0].", f"{fg.li_red}[SALIR]", True)
                             print()
                             action1 = xinput()
                             if action1 == "0": 
                                 break
                             elif action1 in {"1","2","3"}:
-                                value = int(action1)-1
-                                if action == "3":
-                                    _vars.formats["sep"] = value 
-                                elif action == "4":
-                                    _vars.formats["stats"][0] = value    
-                                print(f'Separator format changed to {sepType[value]}')
-                                print()
+                                _vars.formats["sep"] = int(action1)-1
                                 funcs.saveConfig()
                             else:
-                                elseval(action)
+                                elseval(action1)
                     else:
                         elseval(action)
-            elif action == "4":
+            elif action == "5":
                 _vars.exitSubMenu = False
                 while not _vars.exitSubMenu:
                     print(f"{fg.magenta}-----<< {fg(240,210,40)}ACTIONS {fg.magenta}>>-----")
-                    mPrint("[1].", "Save config", True)
-                    mPrint("[2].", "Reload config", True)
-                    mPrint("[3].", "Reset config", True)
+                    mPrint("[1].", f"{fg(110,218,128)}Save config", True)
+                    mPrint("[2].", f"{fg(156,94,222)}Reload config", True)
+                    mPrint("[3].", f"{fg(215,70,60)}Reset config", True)
                     print()
-                    mPrint("[0].", f"{fg.li_red}[GO BACK]", True)
+                    mPrint("[0].", f"{fg.li_red}[SALIR]", True)
                     print()
                     action = xinput()
                     if action == "0":
@@ -177,30 +180,22 @@ def menuLoop(funcMenu):
             elif action == "1":
                 xProgram.addCourse()
             elif action == "2":
-                if not len(_vars.courses):
-                    warn("No hay ningun curso añadido.\n")
-                else:
-                    xProgram.selCourse()
+                xProgram.selCourse()
             elif action == "3":
-                if course is None:
-                    warn("No hay un curso seleccionado.\n")
-                else: 
-                    xProgram.modCourse()
+                xProgram.modCourse()
             elif action == "4":
-                if course is None:
-                    warn("No hay un curso seleccionado.\n")
-                else: 
-                    xProgram.delCourse(course)
+                xProgram.delCourse(course)
             elif action == "5":
-                if not len(_vars.courses):
-                    warn("No hay ningun curso añadido.\n")
-                elif not any(len(x) for x in _vars.courses):
-                    warn("No hay ningun alumno añadido.\n")
-                else:
-                    changeMenu("search")
+                changeMenu("search")
             else:
                 elseval(action)
         while funcMenu == "search" and not _vars.exitMenu:
+            if not len(_vars.courses):
+                warn("No hay ningun curso añadido.\n")
+                return
+            elif not any(len(x) for x in _vars.courses):
+                warn("No hay ningun alumno añadido.\n")
+                return
             if len(_vars.filters):
                 strList = ", ".join(_vars.filters)
                 print(f"Filtros: {strList}\n")
@@ -211,6 +206,7 @@ def menuLoop(funcMenu):
             mPrint("[4].", f"{fg(228,125,50)}Filtrar por Turno", True)
             print()
             mPrint("[5].", f"{fg(30,170,106)}Listado de alumnos", True)
+            mPrint("[6].", f"{fg(215,70,60)}Borrar filtros", True)
             print()
             mPrint("[0].", f"{fg.li_red}[SALIR]", True)
             print()
@@ -241,6 +237,9 @@ def menuLoop(funcMenu):
                         _vars.filters.add(turn)
             elif action == "5":
                 xProgram.listStudents()
+            elif action == "6":
+                _vars.filters = set()
+                warn("Se eliminaron todos los filtros.\n")
             else:
                 elseval(action)
 
@@ -248,9 +247,9 @@ def saveMenu():
     _vars.exitSubMenu = False
     while not _vars.exitSubMenu:
         print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
-        mPrint("[1].", "Export in courses directory", True)
-        mPrint("[2].", f"{fg(190,50,190)}Explore directories", True)
-        mPrint("[3].", f"{fg(230,220,46)}Favorite directories", True)
+        mPrint("[1].", "Exportar en courses", True)
+        mPrint("[2].", f"{fg(116,90,202)}Explorar directorios", True)
+        mPrint("[3].", f"{fg(236,210,81)}Favoritos", True)
         print()
         mPrint("[0].", f"{fg.li_red}[SALIR]", True)
         print()
@@ -270,9 +269,9 @@ def loadMenu():
     _vars.exitSubMenu = False
     while not _vars.exitSubMenu:
         print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
-        mPrint("[1].", "Importar desde curses", True)
-        mPrint("[2].", f"{fg(190,50,190)}Explorar directorios", True)
-        mPrint("[3].", f"{fg(230,220,46)}Favoritos", True)
+        mPrint("[1].", "Importar desde courses", True)
+        mPrint("[2].", f"{fg(116,90,202)}Explorar directorios", True)
+        mPrint("[3].", f"{fg(236,210,81)}Favoritos", True)
         print()
         mPrint("[0].", f"{fg.li_red}[SALIR]", True)
         print()
@@ -293,7 +292,7 @@ def favManager(mode):
     dict_ = _vars.config["favorites"]
     _vars.exitSubMenu = False
     while not _vars.exitSubMenu:
-        print("Remover: 'rem <index>' | Añadir path: 'add <path>'")
+        print("Remover: 'rem <index>' | Añadir: 'add <path>'")
         print("Navegar: 'nav'")
         print()
         print(f"{fg.magenta}-----<< {fg(230,220,46)}FAVORITES {fg.magenta}>>-----\n")
@@ -325,7 +324,7 @@ def favManager(mode):
                 else:
                     warn("Uso: add <path>\n")
                 if path:
-                    print("Write an alphanumeric name for prefix:\n")
+                    print("Escribe un nombre alfanumerico:\n")
                     name = xinput(False)
                     if not alt_funcs.isWhole(name) and len(name) > 0:
                         dict_[name] = path
@@ -335,12 +334,12 @@ def favManager(mode):
                     name = alt_funcs.getByIndex(list(dict_), args[1])
                     if name in dict_:
                         dict_.pop(name)
-                        print(f"Removed {name} from favorites!\n")
+                        print(f"Removido {name} de favoritos!\n")
                         funcs.saveConfig()
                     else:
-                        warn("Invalid index.\n")
+                        warn("Index invalido.\n")
                 elif not len(dict_):
-                    warn("Add a path first\n")
+                    warn("Añade un favorito primero\n")
                 else:
                     warn("Uso: rem <index>\n")
             else:
@@ -349,11 +348,13 @@ def favManager(mode):
 def dirManager(mode, path0="courses", nav=False):
     _vars.exitSubMenu = False
     while not _vars.exitSubMenu:
-        if not os.path.isdir(path0):
-            os.makedirs(path0)
-        dirList = [d.name for d in os.scandir(path0) if d.is_dir()]
+        path1 = funcs.absPath(path0)
+        if not os.path.isdir(path1):
+            os.makedirs(path1, exist_ok=True)
+        dirList = [d.name for d in os.scandir(path1) if d.is_dir()]
         strList = [f"{fg(90,170,238)}{funcs.get_super(i+1)}{fg(135)}'{v}'" for i, v in enumerate(dirList)]
         strList = f"{fg(90,170,238)}, ".join(strList)
+        print(f"Path: {path0}\n") 
         if mode == "save":
             print(f"{fg.cyan}Introducir nombre o numero del directorio donde guardar.")
         else:
@@ -373,18 +374,17 @@ def dirManager(mode, path0="courses", nav=False):
             if path.startswith("/"):
                 path = alt_funcs.lookup(dirList, path[1:])
             if path is False:
-                warn("No coincidences found.\n")
+                warn("No se encontraron coincidencias.\n")
             elif args[0] == "cd":
                 if len(args) > 1:
-                    path = funcs.absPath(' '.join(args[1:])).replace('\\','/')
+                    path = funcs.absPath(f"{path0}/{' '.join(args[1:])}").replace('\\','/')
                     if os.path.isdir(f"{path0}/{path}"):
                         path0 = f"{path0}/{path}"
                     elif os.path.isdir(path):
                         path0 = path
                     else:
-                        warn("Invalid path.\n")
+                        warn("Path invalido.\n")
                         continue
-                    print(f"Path: {path0}\n") 
                 else:
                     warn("Uso: cd <dir/relative/path>")
             elif os.path.isdir(f"{path0}/{path}"):
@@ -465,7 +465,7 @@ def fileManager(mode, path="courses/", file=None):
                     while True:
                         warn(f'ALERTA: El archivo "{file}.wsa" ya existe, reemplazarlo?')
                         mPrint("[1].", "Confirmar.", True)
-                        mPrint("[2].", "Salir.", True)
+                        mPrint("[2].", "Denegar.", True)
                         print()
                         action = xinput(False)
                         if action == "1":

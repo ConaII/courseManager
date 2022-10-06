@@ -21,9 +21,11 @@ def checkAnyIn(string, list_):
             return True
 
 def isWhole(string):
-    if isinstance(string, str) and string != "":
-        if string.isdecimal() or string[0] in ['-','+'] and string[1:].isdecimal():
-            return True
+    try:
+        int(float(string))
+        return True
+    except (ValueError, OverflowError):
+        pass
 
 def isBool(string):
     if isinstance(string, str) and string.lower() in {"true", "1", "false", "0"}:

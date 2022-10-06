@@ -46,8 +46,8 @@ def main():
         if not alt_funcs.isNew():
             while True:
                 print(f'{fg(240,190,25)}Quieres guardar tus datos antes de salir?')
-                funcs.mPrint(f"[1].", "Yes", True)
-                funcs.mPrint(f"[2].", "No", True)
+                funcs.mPrint(f"[1].", "Guardar", True)
+                funcs.mPrint(f"[2].", "Salir", True)
                 print()
                 action = funcs.xinput(False)
                 if action == "1":
@@ -55,24 +55,24 @@ def main():
                 if action in {"1","2"}:
                     break
         if _vars.restart:
-            print(f"{fg.li_red}Press any key to restart the program.{fg.rs}")
+            print(f"{fg.li_red}Presiona cualquier tecla para reiniciar el programa.{fg.rs}")
             lx.getch(True)
             print()
             funcs.saveConfig()
             main()
         else:
-            print(f"{fg.li_red}Press any key to exit the program.{fg.rs}")
+            print(f"{fg.li_red}Presiona cualquier tecla para cerrar el programa.{fg.rs}")
             lx.getch(True)
             print()
     except Exception:
         print(f"{fg.rs}\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
-        print(f"{fg.li_red} --- [WARNING] Something awful happened! ---")
+        print(f"{fg.li_red} --- [WARNING] Algo terrible sucedió! ---")
         print()
         # Will print this message followed by traceback.
         print(f"{fg.red}{traceback.format_exc()}", end='')
         print(f"{fg.rs}____________________________________________________________\n")
         if alt_funcs.isNew():
-            print(f"{fg.red}Current game data is the same as default, saving aborted.\n{fg.rs}")
+            print(f"{fg.red}Los datos son los mismos que los default, guardado abortado.\n{fg.rs}")
         else:
             save = funcs.genFile("courses/crash", "recovery", ".wsa", sep=True, maxFiles=8)
             funcs.saveData(save, "courses/crash/")
@@ -80,11 +80,11 @@ def main():
         log = funcs.genFile("logs/", "report", ".txt", day=True)
         with open(f"logs/{log}.txt", 'w', encoding="utf-8") as f:
             f.write("\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n")
-            f.write("--- [WARNING] Something awful happened! ---\n")
+            f.write("--- [WARNING] Algo terrible sucedió! ---\n")
             f.write(traceback.format_exc())
             f.write("____________________________________________________________\n")
         # Prevent the console window from closing.
-        print(f"{fg.li_red}Press any key to exit the program.{fg.rs}")
+        print(f"{fg.li_red}Presiona cualquier tecla para cerrar el programa.{fg.rs}")
         lx.getch(True)
         print()
         raise

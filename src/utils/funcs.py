@@ -56,8 +56,8 @@ class lxTerm:
 
 # New Logging Interface system.
 def IntLogger():
-    if _vars.config["other"]["forceColors"]:
-        _vars.__COLORS__ = _vars.config["other"]["cmdColors"]
+    if _vars.others["forceColors"]:
+        _vars.__COLORS__ = _vars.others["cmdColors"]
     sys.stdout = xLogger(sys.stdout)
 
 #def rmLast(path, name, ext, maxFiles=0):
@@ -272,8 +272,8 @@ def loadConfig(msg=True):
                             _vars.config[i].update({k: v for k, v in tempConfig[i].items() if k in _vars.defaultCfg[i]})
                         else:
                             _vars.config[i] = tempConfig[i]
-                if _vars.config["other"]["forceColors"]:
-                    _vars.__COLORS__ = _vars.config["other"]["cmdColors"]
+                if _vars.others["forceColors"]:
+                    _vars.__COLORS__ = _vars.others["cmdColors"]
                 _vars.refreshCfg()
             if msg:
                 green(f"Config loaded successfully.")
@@ -558,49 +558,19 @@ def runCommand(cmd):
         elif args[0].lower() == "/addcourse":
             xProgram.addCourse()
         elif args[0].lower() == "/selcourse":
-            if not len(_vars.courses):
-                warn("No hay ningun curso añadido.\n")
-            else:
-                xProgram.selCourse()
+            xProgram.selCourse()
         elif args[0].lower() == "/modcourse":
-            if _vars.selected[0] is None:
-                warn("No hay un curso seleccionado.\n")
-            else: 
-                xProgram.modCourse()
+            xProgram.modCourse()
         elif args[0].lower() == "/delcourse":
-            if not len(_vars.courses):
-                warn("No hay ningun curso añadido.\n")
-            else: 
-                xProgram.delCourse(xProgram.selCourse(False))
-
+            xProgram.delCourse(xProgram.selCourse(False))
         elif args[0].lower() == "/addstudent":
-            if _vars.selected[0] is None:
-                warn("No hay un curso seleccionado.\n")
-            else:
-                xProgram.addStudent(_vars.selected[0])
+            xProgram.addStudent(_vars.selected[0])
         elif args[0].lower() == "/selstudent":
-            if _vars.selected[0] is None:
-                warn("No hay un curso seleccionado.\n")
-            elif not len(_vars.courses[_vars.selected[0]]):
-                warn("No hay ningun alumno añadido.\n")
-            else:
-                xProgram.selStudent()
+            xProgram.selStudent(_vars.selected[0])
         elif args[0].lower() == "/modstudent":
-            if _vars.selected[0] is None:
-                warn("No hay un curso seleccionado.\n")
-            elif not len(_vars.courses[_vars.selected[0]]):
-                warn("No hay ningun alumno añadido.\n")
-            elif _vars.selected[1] is None:
-                warn("No hay un alumno seleccionado.\n")
-            else:
-                xProgram.modStudent()
+            xProgram.modStudent()
         elif args[0].lower() == "/delstudent":
-            if _vars.selected[0] is None:
-                warn("No hay un curso seleccionado.\n")
-            elif not len(_vars.courses[_vars.selected[0]]):
-                warn("No hay ningun alumno añadido.\n")
-            else:
-                xProgram.delCourse(xProgram.selStudent(_vars.selected[0], False))
+            xProgram.delStudent(xProgram.listStudents(select=False))
 
 #-----------------#
 ## Misc Commands ##
@@ -668,8 +638,8 @@ def runCommand(cmd):
                     value = _vars.formats["sep"]
                     sepType = [
                         f"{fg(215,70,60)}No separator",
-                        f"{fg(240,190,25)}Dots separator",
-                        f"{fg(60,215,40)}Comma separator" 
+                        f"{fg(225,171,64)}Dots separator",
+                        f"{fg(90,205,170)}Comma separator" 
                     ]
                     if len(args) > 2:
                         if args[2] in {"0","1","2"}:
@@ -741,8 +711,8 @@ def runCommand(cmd):
                 saveConfig()
         elif args[0].lower() == "/togglecolors":
             usage = False
-            value = _vars.config["other"]["cmdColors"]
-            value1 = _vars.config["other"]["forceColors"]
+            value = _vars.others["cmdColors"]
+            value1 = _vars.others["forceColors"]
             mode = "console"
             if len(args) > 1:
                 if args[1].lower() in {"true", "1", "false", "0"}:
@@ -761,8 +731,8 @@ def runCommand(cmd):
                 print(f"{fg.red}/togglecolors <true/false/force>")
                 print(fg.rs)
             else:
-                _vars.config["other"]["forceColors"] = value1
-                _vars.config["other"]["cmdColors"], _vars.__COLORS__ = value, value
+                _vars.others["forceColors"] = value1
+                _vars.others["cmdColors"], _vars.__COLORS__ = value, value
                 if mode == "console" and value or mode == "force" and value1:
                     print(f"{fg(60,215,40)}Enabled {mode} colors.{fg.rs}")
                     print()
