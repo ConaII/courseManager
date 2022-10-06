@@ -164,13 +164,13 @@ def loadVal(data, msg=False):
             _vars.refreshVars()
             return True
     except (ValueError, pickle.UnpicklingError) as e:
-        red("An error ocurred while unloading, corruption?\n")
+        warn("Un error ocurrió mientras se descargaba, corrupción?\n")
         ExceptionCaught(e)
     except EOFError as e:
-        red(f"An error ocurred while loading, data is empty.\n")
+        warn(f"Un error ocurrió mientras se cargaba, datos vacíos.\n")
         ExceptionCaught(e)
     except NameError as e:
-        red("An error ocurred, program variables not found.\n")
+        warn("Un error ocurrió, variable faltante.\n")
         ExceptionCaught(e)
     except Exception: pass
 
@@ -202,7 +202,7 @@ def saveData(save, path=None, ext=".wsa"):
     except (PermissionError, xlsxwriter.exceptions.FileCreateError):
         warn("Este archivo esta en uso o no se puede editar.")
     except NameError:
-        warn("Program variables were not initiated.")
+        warn("No se inicializaron variables del programa.")
     print()
 
 def loadData(save, path=None, ext='.wsa'):
@@ -241,14 +241,14 @@ def restoreConfig(key, sub_key=None, da_key=None, msg=True):
         target = f"{sub_key}"
     else:
         _vars.config[key][sub_key][da_key] = copy.deepcopy(_vars.defaultCfg[key][sub_key][da_key])
-        target = f"{da_key} of {sub_key}"
+        target = f"{da_key} de {sub_key}"
     if msg:
-        green(f"Config {target} was restored to default.\n")
+        green(f"La configuración {target} se restableció.\n")
     _vars.refreshCfg()
 
 def resetConfig():
     _vars.config = copy.deepcopy(_vars.defaultCfg)
-    green(f"Config was restored to default.")
+    green(f"Configuración restaurada a la predeterminada.")
     print()
     _vars.refreshCfg()
 
@@ -257,7 +257,7 @@ def saveConfig(msg=False):
         with open("config.wdc", 'wb') as f:
             pickle.dump(_vars.config, f)
         if msg:
-            green(f"Current Config was saved successfully.")
+            green(f"Configuración actual guardada exitosamente.")
             print()
 
 def loadConfig(msg=True):
@@ -277,11 +277,11 @@ def loadConfig(msg=True):
                     _vars.__COLORS__ = _vars.others["cmdColors"]
                 _vars.refreshCfg()
             if msg:
-                green(f"Config loaded successfully.")
+                green(f"Configuración cargada exitosamente.")
                 print()
         except FileNotFoundError:
             if msg:
-                green(f"Config created successfully.")
+                green(f"Configuración creada exitosamente.")
                 print()
             saveConfig()
         except (FileNotFoundError, TypeError, EOFError) as e:
@@ -292,7 +292,7 @@ def loadConfig(msg=True):
                     ErrType = "empty-file"
                 else:
                     ErrType = "unknown-err"
-                red(f"Config conflict detected: {ErrType}, resetting to default.")
+                red(f"Error de configuración detectado: {ErrType}, restableciendo.")
                 print()
             saveConfig()
 
@@ -407,8 +407,8 @@ def ExceptionCaught(e, doTraceback=True, lines=True):
     if msg is not None:
         if lines:
             print(f"{fg.rs}‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
-        print(f"{fg.li_red} [WARNING] Something awful happened!")
-        print(f"{fg.da_grey} [{fg(240,190,25)}INFO{fg.da_grey}] {fg.li_blue}Exception caught! {msg}{fg.rs}")
+        print(f"{fg.li_red} [WARNING] Algo terrible sucedió!")
+        print(f"{fg.da_grey} [{fg(240,190,25)}INFO{fg.da_grey}] {fg.li_blue}Código Error: {msg}{fg.rs}")
         # Will print this message followed by traceback.
         if doTraceback and isinstance(e, Exception):
             print(f"\n{fg.red}{traceback.format_exc()}{fg.rs}", end='')
@@ -458,7 +458,7 @@ def runCommand(cmd):
     try:
         args, full_args = shlex_split(cmd), shlex_split(cmd, posix=False)
     except ValueError:
-        red("Invalid input. No closing quotation.\n")
+        red("Entrada inválida, no se cerraron las comillas.\n")
         return
     if isinstance(args, list):
 

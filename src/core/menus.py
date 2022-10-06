@@ -139,7 +139,7 @@ def menuLoop(funcMenu):
             else:
                 elseval(action)
         while funcMenu == "options" and not _vars.exitMenu:
-            toMode = [f"{fg(215,70,60)}disabled",f"{fg(60,215,40)}enabled"]
+            toMode = [f"{fg(215,70,60)}Disabled",f"{fg(60,215,40)}Enabled"]
             print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
             mPrint("[1].", f'{fg(81,205,128) if _vars.options["clearMode"] else fg(215,70,60)}Toggle clearMode', True)
             mPrint("[2].", f'{fg(81,205,128) if _vars.options["menuLogo"] else fg(215,70,60)}Toggle menuLogo', True)
@@ -156,19 +156,19 @@ def menuLoop(funcMenu):
             elif action == "1":
                 value = not _vars.options["clearMode"]
                 if value: funcs.clear()
-                print(f"You {toMode[int(value)]}{fg.rs} the clear mode.")
+                print(f"{toMode[int(value)]}{fg.rs} the clear mode.")
                 print()
                 _vars.options["clearMode"] = value
                 funcs.saveConfig()
             elif action == "2":
                 value = not _vars.options["menuLogo"]
-                print(f"You {toMode[int(value)]}{fg.rs} the menu logo.")
+                print(f"{toMode[int(value)]}{fg.rs} the menu logo.")
                 print()
                 _vars.options["menuLogo"] = value
                 funcs.saveConfig()
             elif action == "3":
                 value = not _vars.other["cmdColors"]
-                print(f"You {toMode[int(value)]}{fg.rs} the cmd colors.")
+                print(f"{toMode[int(value)]}{fg.rs} the cmd colors.")
                 print()
                 _vars.other["cmdColors"] = value
                 funcs.saveConfig()
@@ -412,8 +412,8 @@ def fileManager(mode, path="courses/", file=None):
     _vars.exitSubMenu = False
     while not _vars.exitSubMenu:
         print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
-        mPrint("[1].", "Utilize custom file format", True)
-        mPrint("[2].", "Utilize excel file format", True)
+        mPrint("[1].", "Usar formato programa", True)
+        mPrint("[2].", "Usar formato excel", True)
         print()
         mPrint("[0].", f"{fg.li_red}[SALIR]", True)
         print()

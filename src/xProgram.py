@@ -264,7 +264,6 @@ def modStudent():
 def selStudent(course, select=True):
     if not checkResort(2, course):
         return
-    indexList = list(_vars.courses[course])
     indexSet = set((dni, data[0]) for dni, data in _vars.courses[course].items())
     print(indexSet)
     while True:
