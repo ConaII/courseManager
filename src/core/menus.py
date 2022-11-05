@@ -167,10 +167,10 @@ def menuLoop(funcMenu):
                 _vars.options["menuLogo"] = value
                 funcs.saveConfig()
             elif action == "3":
-                value = not _vars.other["cmdColors"]
+                value = not _vars.others["cmdColors"]
                 print(f"{toMode[int(value)]}{fg.rs} the cmd colors.")
                 print()
-                _vars.other["cmdColors"] = value
+                _vars.others["cmdColors"] = value
                 funcs.saveConfig()
             elif action == "4":
                 _vars.exitSubMenu = False
@@ -404,30 +404,35 @@ def dirManager(mode, path0="courses", nav=False):
             elseval(path)
 
 def fileManager(mode, path="courses/", file=None):
-    path = funcs.absPath(path).replace('\\','/')
-    parse = True if isinstance(file, str) else False
-    ext = ".wsa"
+    path, parse, ext = funcs.absPath(path).replace('\\','/'), False, None
+    if isinstance(file, str):
+        parse = True
+        if file.endswith('.wsa'):
+            ext = ".wsa"
+        elif file.endswith('.xlsx'):
+            ext = ".xlsx"
     if not path.endswith('/'):
         path += '/'
-    _vars.exitSubMenu = False
-    while not _vars.exitSubMenu:
-        print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
-        mPrint("[1].", "Usar formato programa", True)
-        mPrint("[2].", "Usar formato excel", True)
-        print()
-        mPrint("[0].", f"{fg.li_red}[SALIR]", True)
-        print()
-        action = xinput()
-        if action == "0":
-            return
-        elif action == "1":
-            ext = ".wsa"
-            break
-        elif action == "2":
-            ext = ".xlsx"
-            break
-        else:
-            elseval(action)
+    if ext is None:
+        _vars.exitSubMenu = False
+        while not _vars.exitSubMenu:
+            print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
+            mPrint("[1].", "Usar formato programa", True)
+            mPrint("[2].", "Usar formato excel", True)
+            print()
+            mPrint("[0].", f"{fg.li_red}[SALIR]", True)
+            print()
+            action = xinput()
+            if action == "0":
+                return
+            elif action == "1":
+                ext = ".wsa"
+                break
+            elif action == "2":
+                ext = ".xlsx"
+                break
+            else:
+                elseval(action)
     while not _vars.exitSubMenu:
         if not os.path.isdir(path):
             os.makedirs(path, exist_ok=True)

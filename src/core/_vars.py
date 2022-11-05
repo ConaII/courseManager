@@ -1,6 +1,6 @@
 import copy
 
-__VERSION__ = '2.3-pre'
+__VERSION__ = '2.3-pre1'
 __COLORS__ = True
 
 def codeInit():
@@ -69,3 +69,38 @@ def refreshCfg():
     formats = config["formats"]
     options = config["options"]
     others = config["other"]
+
+def loadTest():
+    global var
+    var = {
+        "courses": {
+            "1º2": {
+                88_239_597: ["Barca Doe"],
+                88_239_595: ["Beta Dami"],
+                33_282_395: ["Randal Monroe"],
+            },
+            "2º1": {
+                88_239_596: ["Alaba Doe"],
+                33_282_394: ["Delta Mar"],
+            },
+            "3º5": {
+                88_239_594: ["Carson Tano"],
+                33_282_393: ["Jonna Cena"],
+            },
+            "4º14": {
+                88_239_593: ["John Doe"],
+                33_282_392: ["Janne Doe"],
+            }
+        },
+        "turns": {
+            "1º2": "Mañana",
+            "2º1": "Tarde",
+            "3º5": "Noche",
+            "4º14": "Noche",
+        },
+        "mats": {
+            "Matematicas": ""
+        },
+        "format": 1.1,
+        "version": __VERSION__
+    }

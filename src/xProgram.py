@@ -99,7 +99,7 @@ def modCourse():
             return
         print(f"{fg(58,118,238)}Curso: {fg.li_grey}{course} {fg(114,78,220)}Turno: {fg.li_grey}{_vars.turns[course]}\n")
         if student in _vars.courses[course]:
-            print(f"{fg.li_blue}Alumno: {fg.li_grey}{_vars.courses[course][student][0]} {fg.li_blue}DNI: {fg.li_grey}{alt_funcs.formatDNI(student)}\n")
+            print(f"{fg.li_blue}Alumno: {fg.li_grey}{_vars.courses[course][student][0]} {fg(225,120,98)}DNI: {fg.li_grey}{alt_funcs.formatDNI(student)}\n")
         print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
         mPrint("[1].", f"{fg(85,200,90)}Añadir alumno", True)
         mPrint("[2].", f"{fg(230,180,98)}Seleccionar alumno", True)
@@ -192,8 +192,9 @@ def addStudent(course):
 def delStudent(course, student):
     if not checkResort(3, course, student):
         return
+    data = _vars.courses[course][student]
     while True:
-        red(f"Quiere eliminar a {_vars.courses[course][student]}? Esta accion no se podra deshacer.")
+        red(f"Quiere eliminar a {data[0]}? Esta accion no se podra deshacer.")
         mPrint("[1].", "Confirmar", True)
         mPrint("[2].", "Denegar", True)
         print()
@@ -202,7 +203,7 @@ def delStudent(course, student):
             if student in _vars.courses[course]:
                 _vars.courses[course].pop(student)
                 _vars.selected[1] = None
-                print(f"Se elimino el alumno {_vars.courses[course][student][0]}.\n")
+                print(f"Se elimino el alumno {data[0]}.\n")
         if action in {"1","2"}:
             break
         else: elseval(action)
@@ -215,11 +216,12 @@ def modStudent():
             return
         print(f"{fg(58,118,238)}Curso: {fg.li_grey}{course} {fg(114,78,220)}Turno: {fg.li_grey}{_vars.turns[course]}\n")
         if student in _vars.courses[course]:
-            print(f"{fg.li_blue}Alumno: {fg.li_grey}{_vars.courses[course][student][0]} {fg.li_blue}DNI: {fg.li_grey}{alt_funcs.formatDNI(student)}\n")
+            print(f"{fg.li_blue}Alumno: {fg.li_grey}{_vars.courses[course][student][0]} {fg(225,120,98)}DNI: {fg.li_grey}{alt_funcs.formatDNI(student)}\n")
         print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
         mPrint("[1].", f"{fg(110,218,128)}Cambiar Curso", True)
         mPrint("[2].", f"{fg(130,80,230)}Modificar Nombre", True)
-        mPrint("[3].", f"{fg(215,70,60)}Modificar DNI", True)
+        mPrint("[3].", f"{fg(240,100,40)}Modificar DNI", True)
+        mPrint("[4].", f"{fg(215,70,60)}Eliminar alumno", True)
         print()
         mPrint("[0].", f"{fg.li_red}[VOLVER]", True)
         print()
@@ -248,7 +250,7 @@ def modStudent():
             if dni == 0:
                 pass
             elif dni is not None and dni > 0:
-                if dni in _vars.courses[course]:
+                if any(dni in _vars.courses[x] for x in _vars.courses):
                     warn("El DNI introducido ya fue registrado.\n")
                 elif not alt_funcs.validateDNI(str(dni)): 
                     warn("El DNI introducido no es valido.\n")
@@ -258,6 +260,8 @@ def modStudent():
                     _vars.selected[1] = dni
                     green("Se modifico el DNI correctamente.\n")
             else: elseval(dni)
+        elif action == "4":
+            delStudent(course, student)
         else:
             elseval(action)
 
@@ -265,7 +269,6 @@ def selStudent(course, select=True):
     if not checkResort(2, course):
         return
     indexSet = set((dni, data[0]) for dni, data in _vars.courses[course].items())
-    print(indexSet)
     while True:
         print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
         for i, (dni, name) in enumerate(indexSet):
@@ -376,7 +379,7 @@ def searchStudent(type_):
                 warn("No se encontraron resultados.\n")
             if len(_vars.filters):
                 print(f"{fg.li_grey}Filtros: {', '.join(_vars.filters)}")
-            print(f"Busqueda: {search.replace(' ', ', ')}\n")
+            print(f"{fg.li_blue}Busqueda: {fg.rs}{search.replace(' ', ', ')}\n")
             print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
             for i, (data, course) in enumerate(indexDict.items()):
                 mPrint(f"[{i+1}]", f"{data[1]}: {fg.li_grey}{alt_funcs.formatDNI(data[0])} {fg(225,120,98)}{course}: {fg.li_grey}{_vars.turns[course]}", index=True)
