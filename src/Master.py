@@ -7,8 +7,6 @@ from sty import bg, ef, fg, rs
 # Program
 from utils import funcs, alt_funcs
 from core import _vars, menus
-import xProgram
-
 
 def title(text=None):
     if text is None: text = f"Gestion Cursos - {_vars.__VERSION__}"

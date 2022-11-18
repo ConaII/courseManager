@@ -67,8 +67,9 @@ def lookup(where, string):
     return False
 
 def formatDNI(dni):
-    return f"{dni:,}".replace(',','.')
-
+    if type(dni) in (int, float):
+        return f"{dni:,}".replace(',','.')
+    return dni
 
 #def formatAmount(amount, sep=None):
 #    amount = int(amount)

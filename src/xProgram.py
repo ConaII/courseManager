@@ -67,6 +67,7 @@ def addCourse():
     elif course is not None:
         turn = selTurn()
         if turn is not None:
+            _vars.selected = [course, None]
             _vars.courses[course] = {} 
             _vars.turns[course] = turn
             green(f"Se añadio el curso {course} en el turno {turn}.\n")
@@ -153,7 +154,7 @@ def selCourse(select=True, filters=False):
             if not select:
                 return course
             else:
-                _vars.selected[0] = course
+                _vars.selected = [course, None]
                 return
         else: elseval(action)
 
@@ -186,6 +187,7 @@ def addStudent(course):
                 else:
                     _vars.courses[course][dni] = [name]
                     green(f"Se añadio al estudiante {name} con DNI {alt_funcs.formatDNI(dni)}.\n")
+                    _vars.selected = [course, dni]
                     break
         else: elseval(name)
 
@@ -233,7 +235,7 @@ def modStudent():
             if newCourse is not None:
                 _vars.courses[newCourse][student] = _vars.courses[course][student]
                 _vars.courses[course].pop(student)
-                _vars.selected[0] = newCourse  
+                course, _vars.selected[0] = newCourse  
         elif action == "2":
             print(f"Introducir nombres (Separar con espacios):\n")
             name = xinput(False)
@@ -257,7 +259,7 @@ def modStudent():
                 else:
                     _vars.courses[course][dni] = _vars.courses[course][student]
                     _vars.courses[course].pop(student)
-                    _vars.selected[1] = dni
+                    student, _vars.selected[1] = dni
                     green("Se modifico el DNI correctamente.\n")
             else: elseval(dni)
         elif action == "4":
@@ -355,7 +357,7 @@ def searchStudent(type_):
                 elif name == "":
                     print("Puedes salir de este menu introduciendo '0'\n")
                 elif name is not None and len(name):
-                    search = name.replace(', ', ' ').replace(',', ' ')
+                    search = name.replace(', ', ',').replace(' ', ',').replace(',', ', ')
                 else:
                     elseval(name)
             if type_ == "dni":
@@ -372,14 +374,14 @@ def searchStudent(type_):
             dict_ = filterList()
             indexDict = {}
             if type_ == "name":
-                indexDict = {data:course for data, course in dict_.items() if any(x in search.split() for x in data[1].split())}
+                indexDict = {data:course for data, course in dict_.items() if any(x in search.split(', ') for x in data[1].split())}
             elif type_ == "dni":
                 indexDict = {data:course for data, course in dict_.items() if f"{search}" in f"{data[0]}"}
             if not len(indexDict):
                 warn("No se encontraron resultados.\n")
             if len(_vars.filters):
                 print(f"{fg.li_grey}Filtros: {', '.join(_vars.filters)}")
-            print(f"{fg.li_blue}Busqueda: {fg.rs}{search.replace(' ', ', ')}\n")
+            print(f"{fg.li_blue}Busqueda: {fg.rs}{alt_funcs.formatDNI(search)}\n")
             print(f"{fg.magenta}-----<< {fg(240,210,40)}OPCIONES {fg.magenta}>>-----")
             for i, (data, course) in enumerate(indexDict.items()):
                 mPrint(f"[{i+1}]", f"{data[1]}: {fg.li_grey}{alt_funcs.formatDNI(data[0])} {fg(225,120,98)}{course}: {fg.li_grey}{_vars.turns[course]}", index=True)

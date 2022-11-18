@@ -359,7 +359,7 @@ def intInput(replace=False, inLoop=False):
     try:
         action = xinput(False, ">>", fg(240,70,140))
         if replace:
-            action = action.replace('.','_')
+            action = action.replace('.','_').replace(',','_')
         return int(float(action))
     except (ValueError, OverflowError):
         if inLoop and action == "": return ""
